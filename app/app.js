@@ -87,7 +87,11 @@ function App() {
               class: "toggle",
               onclick: () => checkedTodo(todo),
             }),
-            jsx("label", null, todo.text),
+            jsx(
+              "label",
+              { className: `${todo.completed ? "checked" : "nocheck"}` },
+              todo.text
+            ),
 
             jsx("button", {
               class: "destroy",

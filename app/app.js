@@ -1,9 +1,7 @@
 import { useState, useEffect, jsx, addRoute } from "../framework/main.js";
 function App() {
   const [todos, setTodos] = useState([]);
-  console.log(todos);
-  const [checked, setchecked] = useState(true);
-
+  const allChecked = (todos.every((t) => t.completed === true))
 
   const itemLeft = todos.filter((todo) => {
     return todo.completed == false;
@@ -18,19 +16,11 @@ function App() {
   }
 
   function checkedAll() {
-    console.log("ch",checked);
-    
-    if (todos.every((t) => t.completed === true)) {
-      
-      setchecked(!checked);
-      console.log("ch****",checked);
-    }
-    console.log("ch",checked);
 
     const arr = todos.map((t) => {
-      return { ...t, completed: checked };
+      return { ...t, completed: !allChecked };
     });
-    setTodos(arr)
+    setTodos(arr);
   }
 
   function addTodo(e) {
@@ -128,7 +118,7 @@ function App() {
             className: "toggle-all-container",
           },
           jsx("input", {
-            className: "toggle-all",
+            className: allChecked ? "toggle-all checkedAll" : "toggle-all",
             type: "checkbox",
             id: "toggle-all",
             "data-testid": "toggle-all",
@@ -141,33 +131,34 @@ function App() {
         )
         : null,
 
-      // FOOTER (conditional)
-      todos.length > 0
-        ? jsx(
-          "footer",
-          { className: "footer" },
 
-          jsx("span", { className: "todo-count" }, itemLeft + " items left"),
+    ),
+    // FOOTER (conditional)
+    todos.length > 0
+      ? jsx(
+        "footer",
+        { className: "footer" },
+
+        jsx("span", { className: "todo-count" }, itemLeft + " items left"),
+
+        jsx(
+          "ul",
+          { className: "filters" },
 
           jsx(
-            "ul",
-            { className: "filters" },
-
-            jsx(
-              "li",
-              null,
-              jsx("a", { className: "selected", href: "#/" }, "All")
-            ),
-
-            jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
-
-            jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
+            "li",
+            null,
+            jsx("a", { className: "selected", href: "#/" }, "All")
           ),
 
-          jsx("button", { className: "clear-completed", onclick: clearCompleted }, "Clear completed")
-        )
-        : null
-    )
+          jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+
+          jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
+        ),
+
+        jsx("button", { className: "clear-completed", onclick: clearCompleted }, "Clear completed")
+      )
+      : null
   );
 }
 

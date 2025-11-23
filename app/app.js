@@ -2,6 +2,8 @@ import { useState, useEffect, jsx, addRoute } from "../framework/main.js";
 function App() {
   const [todos, setTodos] = useState([]);
   console.log(todos);
+  const [checked, setchecked] = useState(true);
+
 
   const itemLeft = todos.filter((todo) => {
     return todo.completed == false;
@@ -16,10 +18,18 @@ function App() {
   }
 
   function checkedAll() {
-    const arr = todos.map((t) => {
-      return { ...t, completed: !t.completed };
-    });
+    console.log("ch",checked);
+    
+    if (todos.every((t) => t.completed === true)) {
+      
+      setchecked(!checked);
+      console.log("ch****",checked);
+    }
+    console.log("ch",checked);
 
+    const arr = todos.map((t) => {
+      return { ...t, completed: checked };
+    });
     setTodos(arr)
   }
 
@@ -44,6 +54,14 @@ function App() {
     setTodos(updated);
   }
 
+  function clearCompleted() {
+    //console.log("Clearing completed todos", todos);
+    const activeTodos = todos.filter((todo) => {
+      return todo.completed == false;
+    });
+    // console.log("Active todos", activeTodos);
+    setTodos(activeTodos);
+  }
   return jsx(
     "section",
     { className: "todoapp" },
@@ -105,49 +123,49 @@ function App() {
 
       todos.length > 0
         ? jsx(
-            "div",
-            {
-              className: "toggle-all-container",
-            },
-            jsx("input", {
-              className: "toggle-all",
-              type: "checkbox",
-              id: "toggle-all",
-              "data-testid": "toggle-all",
-              onclick: () => checkedAll(),
-            }),
-            jsx("label", {
-              className: "toggle-all-label",
-              for: "toggle-all",
-            })
-          )
+          "div",
+          {
+            className: "toggle-all-container",
+          },
+          jsx("input", {
+            className: "toggle-all",
+            type: "checkbox",
+            id: "toggle-all",
+            "data-testid": "toggle-all",
+            onclick: () => checkedAll(),
+          }),
+          jsx("label", {
+            className: "toggle-all-label",
+            for: "toggle-all",
+          })
+        )
         : null,
 
       // FOOTER (conditional)
       todos.length > 0
         ? jsx(
-            "footer",
-            { className: "footer" },
+          "footer",
+          { className: "footer" },
 
-            jsx("span", { className: "todo-count" }, itemLeft + " items left"),
+          jsx("span", { className: "todo-count" }, itemLeft + " items left"),
+
+          jsx(
+            "ul",
+            { className: "filters" },
 
             jsx(
-              "ul",
-              { className: "filters" },
-
-              jsx(
-                "li",
-                null,
-                jsx("a", { className: "selected", href: "#/" }, "All")
-              ),
-
-              jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
-
-              jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
+              "li",
+              null,
+              jsx("a", { className: "selected", href: "#/" }, "All")
             ),
 
-            jsx("button", { className: "clear-completed" }, "Clear completed")
-          )
+            jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+
+            jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
+          ),
+
+          jsx("button", { className: "clear-completed", onclick: clearCompleted }, "Clear completed")
+        )
         : null
     )
   );

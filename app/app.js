@@ -143,7 +143,7 @@ function App() {
       ),
       // TOGGLE ALL (conditional)
       todos.length > 0
-        ? jsx(
+        && jsx(
           "div",
           {
             className: "toggle-all-container",
@@ -159,14 +159,11 @@ function App() {
             className: "toggle-all-label",
             for: "toggle-all",
           })
-        )
-        : null,
-
-
+        ),
     ),
     // FOOTER (conditional)
     todos.length > 0
-      ? jsx(
+      && jsx(
         "footer",
         { className: "footer" },
 
@@ -188,8 +185,7 @@ function App() {
         ),
 
         jsx("button", { className: "clear-completed", onclick: clearCompleted }, "Clear completed")
-      )
-      : null
+      ),
   );
 }
 

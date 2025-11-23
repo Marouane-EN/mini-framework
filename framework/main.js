@@ -4,7 +4,6 @@ import { addRoute } from "./core/route.js";
 import {handleRouteChange}  from "./core/route.js"
 
 export function startTransition() {
-    console.log(2132131);
     
     window.addEventListener('hashchange', handleRouteChange);
     handleRouteChange();

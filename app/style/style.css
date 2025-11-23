@@ -166,7 +166,7 @@ body {
   transform: rotate(90deg);
 }
 
-.toggle-all:checked + label:before , .checkedAll + label:before{
+.checkedAll + label:before{
   color: #484848;
 }
 

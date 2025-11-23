@@ -3,9 +3,8 @@ import { createElement } from "./dom.js";
 export function updateElement(parent, newNode, oldNode, index = 0) {
   // If oldNode doesn't exist, create new DOM
 
-  
-  if (!oldNode) {
 
+  if (!oldNode) {
     parent.appendChild(createElement(newNode));
     return;
   }
@@ -19,7 +18,7 @@ export function updateElement(parent, newNode, oldNode, index = 0) {
 
   // If types differ, replace
   if (newNode.type !== oldNode.type || typeof newNode !== typeof oldNode) {
-    
+
     parent.replaceChild(createElement(newNode), parent.childNodes[index]);
     return;
   }
@@ -53,7 +52,7 @@ export function updateElement(parent, newNode, oldNode, index = 0) {
     const value = newNode.props[key];
     if (key.startsWith("on")) {
       // For simplicity, remove old and add new
-      
+
       if (oldNode.props[key] !== value) {
         if (oldNode.props[key]) {
           el.removeEventListener(
@@ -76,8 +75,7 @@ export function updateElement(parent, newNode, oldNode, index = 0) {
   // Diff children
   const maxLen = Math.max(newNode.children.length, oldNode.children.length);
   for (let i = 0; i < maxLen; i++) {
-      
-      updateElement(el, newNode.children[i], oldNode.children[i], i);
+    updateElement(el, newNode.children[i], oldNode.children[i], i);
   }
-  
+
 }

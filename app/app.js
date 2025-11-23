@@ -1,6 +1,9 @@
-import { useState, useEffect, jsx, addRoute } from "../framework/main.js";
+import { useState, jsx, addRoute } from "../framework/main.js";
 function App() {
   const [todos, setTodos] = useState([]);
+  const [editingKey, setEditingKey] = useState(null);
+  const [editText, setEditText] = useState("");
+
   const allChecked = (todos.every((t) => t.completed === true))
 
   const itemLeft = todos.filter((todo) => {
@@ -45,13 +48,28 @@ function App() {
   }
 
   function clearCompleted() {
-    //console.log("Clearing completed todos", todos);
     const activeTodos = todos.filter((todo) => {
       return todo.completed == false;
     });
-    // console.log("Active todos", activeTodos);
     setTodos(activeTodos);
   }
+
+  function startEditing(todo) {
+    setEditingKey(todo.key);
+    setEditText(todo.text);
+  }
+
+  function finishEditing() {
+    setTodos(prev =>
+      prev.map(t =>
+        t.key === editingKey ? { ...t, text: editText } : t
+      )
+    );
+
+    setEditingKey(null);
+    setEditText("");
+  }
+
   return jsx(
     "section",
     { className: "todoapp" },
@@ -91,18 +109,31 @@ function App() {
           return jsx(
             "li",
             { className: "todo-item", key: todo.key },
-
             jsx("input", {
               type: "checkbox",
               className: "toggle",
               onclick: () => checkedTodo(todo),
             }),
-            jsx(
-              "label",
-              { className: `${todo.completed ? "checked" : "nocheck"}` },
-              todo.text
-            ),
 
+            editingKey === todo.key
+              ? jsx("input", {
+                type: "text",
+                className: "edit-input",
+                value: editText,
+                oninput: (e) => setEditText(e.target.value),
+                onkeydown: (e) => {
+                  if (e.key === "Enter") finishEditing();
+                },
+                autofocus: true,
+              })
+              : jsx(
+                "label",
+                {
+                  className: `${todo.completed ? "checked" : "nocheck"}`,
+                  ondblclick: () => startEditing(todo),
+                },
+                todo.text
+              ),
             jsx("button", {
               className: "destroy",
               onclick: () => deleteTodo(todo.key),
@@ -110,7 +141,7 @@ function App() {
           );
         })
       ),
-
+      // TOGGLE ALL (conditional)
       todos.length > 0
         ? jsx(
           "div",

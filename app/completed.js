@@ -1,15 +1,14 @@
 import { useState, jsx, addRoute, Store } from "../framework/main.js";
-import { completed } from "./completed.js";
+import { store } from "./app.js";
 // GLOBAL STORE HOLDS TODOS
-export const store = Store({ todos: [] });
 
-function App() {
+export function completed() {
   // ❌ OLD LOCAL STATE (REMOVED)
   // const [todos, setTodos] = useState([]);
 
   // ✔ todos now come from GLOBAL STORE
-  const todos = store.get().todos;
-
+  let todos = store.get().todos;
+  todos = todos.filter((t) => t.completed === true);
   // local UI states (still fine to keep)
   const [editingKey, setEditingKey] = useState(null);
   const [editText, setEditText] = useState("");
@@ -30,12 +29,12 @@ function App() {
   function checkedTodo(todo) {
     // ❌ OLD (local state)
     /*
-    setTodos((prevTodos) =>
-      prevTodos.map((t) =>
-        t.key === todo.key ? { ...t, completed: !t.completed } : t
-      )
-    );
-    */
+        setTodos((prevTodos) =>
+          prevTodos.map((t) =>
+            t.key === todo.key ? { ...t, completed: !t.completed } : t
+          )
+        );
+        */
 
     // ✔ NEW (global state)
     const updated = todos.map((t) =>
@@ -53,15 +52,15 @@ function App() {
     if (e.key === "Enter" && e.target.value.trim().length >= 2) {
       // ❌ OLD
       /*
-      setTodos((prevTodos) => [
-        ...prevTodos,
-        {
-          text: e.target.value,
-          completed: false,
-          key: crypto.randomUUID(),
-        },
-      ]);
-      */
+          setTodos((prevTodos) => [
+            ...prevTodos,
+            {
+              text: e.target.value,
+              completed: false,
+              key: crypto.randomUUID(),
+            },
+          ]);
+          */
 
       // ✔ NEW
       const updated = [
@@ -99,10 +98,10 @@ function App() {
   function finishEditing() {
     // ❌ OLD
     /*
-    setTodos((prev) =>
-      prev.map((t) => (t.key === editingKey ? { ...t, text: editText } : t))
-    );
-    */
+        setTodos((prev) =>
+          prev.map((t) => (t.key === editingKey ? { ...t, text: editText } : t))
+        );
+        */
 
     // ✔ NEW
     const updated = todos.map((t) =>
@@ -212,60 +211,28 @@ function App() {
     ),
 
     // FOOTER
-    todos.length > 0 &&
+    jsx(
+      "footer",
+      { className: "footer" },
+
+      jsx("span", { className: "todo-count" }, itemLeft + " items left"),
+
       jsx(
-        "footer",
-        { className: "footer" },
+        "ul",
+        { className: "filters" },
 
-        jsx("span", { className: "todo-count" }, itemLeft + " items left"),
+        jsx("li", null, jsx("a", { className: "selected", href: "#/" }, "All")),
 
-        jsx(
-          "ul",
-          { className: "filters" },
+        jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
 
-          jsx(
-            "li",
-            null,
-            jsx("a", { className: "selected", href: "#/" }, "All")
-          ),
+        jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
+      ),
 
-          jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
-
-          jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
-        ),
-
-        jsx(
-          "button",
-          { className: "clear-completed", onclick: clearCompleted },
-          "Clear completed"
-        )
+      jsx(
+        "button",
+        { className: "clear-completed", onclick: clearCompleted },
+        "Clear completed"
       )
+    )
   );
 }
-
-// --------------------------------------
-
-export const footer = jsx(
-  "footer",
-  { className: "info" },
-  jsx("p", null, "Double-click to edit a todo"),
-  jsx("p", null, "Created by the ranniz family"),
-  jsx(
-    "p",
-    null,
-    "Part of ",
-    jsx("a", { href: "https://github.com/" }, "Zone01")
-  )
-);
-
-// COMPLETED PAGE
-function complited() {
-  return jsx(
-    "section",
-    { className: "completed-view" },
-    jsx("h2", null, "Completed Todos")
-  );
-}
-
-addRoute("/completed", completed);
-addRoute("/", App);

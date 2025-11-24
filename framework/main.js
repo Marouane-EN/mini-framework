@@ -1,22 +1,21 @@
-import { useState, useEffect } from "./core/hooks.js";
+import { useState, useEffect, Store } from "./core/hooks.js";
 import { jsx } from "./core/jsx.js";
 import { addRoute } from "./core/route.js";
-import {handleRouteChange}  from "./core/route.js"
+import { handleRouteChange } from "./core/route.js";
 
 /**
  * Initializes the routing system by setting up hash change listeners
  * Should be called automatically when the first route is registered
  * Listens for URL hash changes and triggers route handling
- * 
+ *
  * @returns {void}
- * 
+ *
  * @example
  * // Typically called internally, but can be called manually
  * startTransition();
  */
 export function startTransition() {
-    
-    window.addEventListener('hashchange', handleRouteChange);
-    handleRouteChange();
+  window.addEventListener("hashchange", handleRouteChange);
+  handleRouteChange();
 }
-export { useState, useEffect, jsx, addRoute };
+export { useState, useEffect, jsx, addRoute, Store };

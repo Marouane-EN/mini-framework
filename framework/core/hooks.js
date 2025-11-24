@@ -10,7 +10,7 @@ export let pindingEffects = [];
  * Resets all hook indices and clears pending effects
  * Called before each render to prepare for fresh hook execution
  * Ensures hooks are called in the same order every render
- * 
+ *
  * @returns {void}
  */
 export function clearhooks() {
@@ -23,10 +23,10 @@ export function clearhooks() {
  * React-style state hook for managing component state
  * Returns current state value and a setter function that triggers re-renders
  * Must be called in the same order on every render (don't call conditionally)
- * 
+ *
  * @param {*} initialValue - Initial state value (only used on first render)
  * @returns {Array} Tuple of [currentState, setState] - state value and updater function
- * 
+ *
  * @example
  * const [count, setCount] = useState(0);
  * setCount(count + 1); // Set new value
@@ -54,15 +54,15 @@ export function useState(initialValue) {
 /**
  * React-style effect hook for side effects (data fetching, subscriptions, DOM manipulation)
  * Runs the callback after render if dependencies have changed
- * 
+ *
  * @param {Function} callback - Effect function to run (can return cleanup function)
  * @param {Array} dependencies - Array of values that trigger re-run when changed
  * @returns {void}
- * 
+ *
  * @example
  * // Run once on mount
  * useEffect(() => { console.log('Mounted'); }, []);
- * 
+ *
  * // Run when count changes
  * useEffect(() => { document.title = `Count: ${count}`; }, [count]);
  */
@@ -81,7 +81,7 @@ export function useEffect(callback, dependencies) {
 /**
  * Checks if effect dependencies have changed between renders
  * Compares old and new dependency arrays using shallow equality
- * 
+ *
  * @param {Array|undefined} oldDeps - Previous dependency array
  * @param {Array} newDeps - Current dependency array
  * @returns {boolean} True if dependencies changed or it's first render, false otherwise
@@ -94,4 +94,22 @@ function areDepsChanged(oldDeps, newDeps) {
     if (oldDeps[i] !== newDeps[i]) return true;
   }
   return false;
+}
+
+export function Store(initialState) {
+  let state = initialState === undefined ? null : initialState;
+
+  const get = () => state;
+
+  const set = (newState) => {
+    state = { ...state, ...newState };
+    render();
+  };
+
+  // const update = (updater) => {
+  //     const next = typeof updater === 'function' ? updater(state) : updater;
+  //     set(next);
+  // };
+
+  return { get, set };
 }

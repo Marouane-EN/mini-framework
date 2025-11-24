@@ -119,7 +119,7 @@ export function active() {
               : jsx(
                   "label",
                   {
-                    className: todo.completed ? "checked" : "nocheck",
+                    className: todo.completed ? "checked completed" : "nocheck",
                     ondblclick: () => startEditing(todo),
                   },
                   todo.text
@@ -168,10 +168,10 @@ export function active() {
           jsx(
             "li",
             null,
-            jsx("a", { className: "selected", href: "#/" }, "All")
+            jsx("a", { href: "#/" }, "All")
           ),
 
-          jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+          jsx("li", null, jsx("a", {className: "selected", href: "#/active" }, "Active")),
 
           jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
         ),

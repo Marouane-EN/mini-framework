@@ -238,8 +238,8 @@ body {
   word-break: break-all;
 }
 
-.todo-list li.completed label {
-  color: #949494;
+.completed {
+  color: #949494 !important;
   text-decoration: line-through;
 }
 

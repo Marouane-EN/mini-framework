@@ -536,6 +536,75 @@ useEffect(() => {
 
 ---
 
+#### `Store(initialState)`
+
+Creates a global store for managing shared state across components without prop drilling.
+
+```javascript
+const store = Store(initialState);
+```
+
+**Parameters:**
+- `initialState` - Initial state object (optional, defaults to `null`)
+
+**Returns:**
+- Object with `get()` and `set()` methods
+
+**Methods:**
+- `get()` - Returns the current state
+- `set(newState)` - Merges `newState` with current state and triggers re-render
+
+**Examples:**
+
+```javascript
+import { Store, jsx } from './framework/main.js';
+
+// Create a store
+const userStore = Store({ name: 'Guest', loggedIn: false });
+
+// In any component - read state
+function Header() {
+    const user = userStore.get();
+    return jsx('div', null, `Welcome, ${user.name}`);
+}
+
+// In any component - update state
+function LoginButton() {
+    const handleLogin = () => {
+        userStore.set({ name: 'John', loggedIn: true });
+    };
+    
+    return jsx('button', { onclick: handleLogin }, 'Login');
+}
+
+// Multiple stores for different concerns
+const themeStore = Store({ mode: 'light', fontSize: 14 });
+const cartStore = Store({ items: [], total: 0 });
+
+// Update multiple properties
+themeStore.set({ mode: 'dark' }); // Only updates mode, keeps fontSize
+cartStore.set({ items: [...items, newItem], total: newTotal });
+
+// Store with no initial state
+const tempStore = Store(); // state is null initially
+tempStore.set({ data: 'value' }); // Now state is { data: 'value' }
+```
+
+**How it works:**
+- Creates a closure with private state
+- `set()` merges new state with existing state using spread operator
+- Calling `set()` automatically triggers a re-render
+- All components using the store will get updated values
+- Unlike Context API, stores don't require Provider wrappers
+
+**When to use:**
+- ✅ Global app state (theme, auth, settings)
+- ✅ Shared data across multiple components
+- ✅ Simple state management without boilerplate
+- ❌ Avoid for component-specific state (use `useState` instead)
+
+---
+
 ### Routing
 
 #### `addRoute(path, component)`

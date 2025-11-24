@@ -14,16 +14,10 @@
  * // Returns: <div class="box">Hello</div>
  */
 export function createElement(node) {
-  console.log("++++++++node", node);
 
   if (typeof node === "string" || typeof node === "number") {
     return document.createTextNode(String(node));
   }
-
-  // if (typeof node.type === "function") {
-  //     console.log("sqdsqdqs",node);
-  //     return createElement(node.type({ ...node.props, children: node.children }));
-  // }
 
   const el = document.createElement(node.type);
 

@@ -125,7 +125,7 @@ export function App() {
               : jsx(
                   "label",
                   {
-                    className: todo.completed ? "checked" : "nocheck",
+                    className: todo.completed ? "checked completed" : "nocheck",
                     ondblclick: () => startEditing(todo),
                   },
                   todo.text

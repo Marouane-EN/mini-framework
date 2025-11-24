@@ -62,53 +62,75 @@ export function completed() {
     setEditText("");
   }
 
-  return jsx(
-    "section",
-    { className: "todoapp" },
-
-    // HEADER
+ return jsx(
+    "div", null,
     jsx(
-      "header",
-      { className: "header" },
+      "section",
+      { className: "todoapp", id: "root" },
 
-      jsx("h1", null, "todos"),
-
+      // HEADER
       jsx(
-        "div",
-        { className: "input-container" },
+        "header",
+        { className: "header", "data-testid": "header" },
 
-        jsx("input", {
-          className: "new-todo",
-          id: "todo-input",
-          type: "text",
-          autofocus: true,
-          placeholder: "What needs to be done?",
-          onkeydown: (e) => addTodo(e),
-        })
-      )
-    ),
+        jsx("h1", null, "todos"),
 
-    // MAIN
-    jsx(
-      "main",
-      { className: "main" },
+        jsx(
+          "div",
+          { className: "input-container" },
 
+          jsx("input", {
+            className: "new-todo",
+            id: "todo-input",
+            type: "text",
+            "data-testid": "text-input",
+            placeholder: "What needs to be done?",
+            onkeydown: (e) => addTodo(e),
+          }),
+          jsx("label", { className: "visually-hidden", for: "todo-input" }, "New Todo Input")
+        )
+      ),
+
+      // MAIN
       jsx(
-        "ul",
-        { className: "todo-list" },
+        "main",
+        { className: "main", "data-testid": "main" },
 
-        ...currentTodos.map((todo) => {
-          return jsx(
-            "li",
-            { className: "todo-item", key: todo.key },
+        // checked All
+        currentTodos.length > 0 &&
+        jsx(
+          "div",
+          { className: "toggle-all-container" },
 
-            editingKey !== todo.key
-              ? jsx(
+          jsx("input", {
+            className: allChecked ? "toggle-all checkedAll" : "toggle-all",
+            type: "checkbox",
+            id: "toggle-all",
+            "data-testid": "toggle-all",
+            onclick: () => checkedAll(),
+          }),
+
+          jsx("label", {
+            className: "toggle-all-label",
+            for: "toggle-all",
+          }, "Toggle All Input")
+        ),
+        jsx(
+          "ul",
+          { className: "todo-list", "data-testid": "todo-list" },
+
+          ...currentTodos.map((todo) => {
+            return jsx(
+              "li",
+              { className: todo.completed ? "completed" : "", key: todo.key },
+              editingKey !== todo.key
+                ? jsx(
                   "div",
                   { className: "view" },
                   jsx("input", {
                     type: "checkbox",
                     className: "toggle",
+                    "data-testid":"todo-item-toggle",
                     onclick: () => checkedTodo(todo),
                   }),
                   jsx(
@@ -122,10 +144,11 @@ export function completed() {
 
                   jsx("button", {
                     className: "destroy",
+                    "data-testid":"todo-item-button",
                     onclick: () => deleteTodo(todo.key),
                   })
                 )
-              : jsx(
+                : jsx(
                   "div",
                   { className: "view" },
                   jsx(
@@ -150,32 +173,20 @@ export function completed() {
                     )
                   )
                 )
-          );
-        })
+
+            )
+          })
+        ),
       ),
 
+
+
+
       // TOGGLE ALL
-      currentTodos.length > 0 &&
-        jsx(
-          "div",
-          { className: "toggle-all-container" },
 
-          jsx("input", {
-            className: allChecked ? "toggle-all checkedAll" : "toggle-all",
-            type: "checkbox",
-            id: "toggle-all",
-            "data-testid": "toggle-all",
-            onclick: () => checkedAll(),
-          }),
 
-          jsx("label", {
-            className: "toggle-all-label",
-            for: "toggle-all",
-          })
-        )
-    ),
-    todos.length > 0 &&
       // FOOTER
+      todos.length > 0 &&
       jsx(
         "footer",
         { className: "footer" },
@@ -184,28 +195,38 @@ export function completed() {
 
         jsx(
           "ul",
-          { className: "filters" },
-
-          jsx("li", null, jsx("a", { href: "#/" }, "All")),
-
-          jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+          { className: "filters" , "data-testid":"footer-navigation" },
 
           jsx(
             "li",
             null,
-            jsx(
-              "a",
-              { className: "selected", href: "#/completed" },
-              "Completed"
-            )
-          )
+            jsx("a", { href: "#/" }, "All")
+          ),
+
+          jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+
+          jsx("li", null, jsx("a", {className: "selected", href: "#/completed" }, "Completed"))
         ),
 
         jsx(
           "button",
-          { className: "clear-completed", onclick: clearCompleted },
+          { className: "clear-completed", onclick: clearCompleted  },
           "Clear completed"
         )
       )
-  );
+
+    )
+    , jsx(
+      "footer",
+      { className: "info" },
+      jsx("p", null, "Double-click to edit a todo"),
+      jsx("p", null, "Created by the ranniz family"),
+      jsx(
+        "p",
+        null,
+        "Part of ",
+        jsx("a", { href: "https://github.com/RedaAz07" }, "Zone01")
+      )
+    )
+  )
 }

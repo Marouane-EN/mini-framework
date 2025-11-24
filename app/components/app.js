@@ -1,42 +1,22 @@
-import { useState, jsx, addRoute, Store } from "../framework/main.js";
-import { store } from "./app.js";
+import { useState, jsx, Store } from "../../framework/main.js";
 // GLOBAL STORE HOLDS TODOS
+export const store = Store({ todos: [] });
 
-export function completed() {
-  // ❌ OLD LOCAL STATE (REMOVED)
-  // const [todos, setTodos] = useState([]);
+export function App() {
+  const todos = store.get().todos;
 
-  // ✔ todos now come from GLOBAL STORE
-  let todos = store.get().todos;
-  todos = todos.filter((t) => t.completed === true);
-  // local UI states (still fine to keep)
   const [editingKey, setEditingKey] = useState(null);
   const [editText, setEditText] = useState("");
 
-  // ✔ helper to update global todos
   function setTodos(newList) {
-    store.set({ todos: newList }); // global update + re-render
+    store.set({ todos: newList });
   }
 
   const allChecked = todos.every((t) => t.completed === true);
 
   const itemLeft = todos.filter((todo) => !todo.completed).length;
 
-  // -------------------------
-  // TODO LOGIC
-  // -------------------------
-
   function checkedTodo(todo) {
-    // ❌ OLD (local state)
-    /*
-        setTodos((prevTodos) =>
-          prevTodos.map((t) =>
-            t.key === todo.key ? { ...t, completed: !t.completed } : t
-          )
-        );
-        */
-
-    // ✔ NEW (global state)
     const updated = todos.map((t) =>
       t.key === todo.key ? { ...t, completed: !t.completed } : t
     );
@@ -50,19 +30,6 @@ export function completed() {
 
   function addTodo(e) {
     if (e.key === "Enter" && e.target.value.trim().length >= 2) {
-      // ❌ OLD
-      /*
-          setTodos((prevTodos) => [
-            ...prevTodos,
-            {
-              text: e.target.value,
-              completed: false,
-              key: crypto.randomUUID(),
-            },
-          ]);
-          */
-
-      // ✔ NEW
       const updated = [
         ...todos,
         {
@@ -78,11 +45,6 @@ export function completed() {
   }
 
   function deleteTodo(key) {
-    // ❌ OLD
-    // const updated = todos.filter((todo) => todo.key != key);
-    // setTodos(updated);
-
-    // ✔ NEW
     setTodos(todos.filter((todo) => todo.key !== key));
   }
 
@@ -96,14 +58,6 @@ export function completed() {
   }
 
   function finishEditing() {
-    // ❌ OLD
-    /*
-        setTodos((prev) =>
-          prev.map((t) => (t.key === editingKey ? { ...t, text: editText } : t))
-        );
-        */
-
-    // ✔ NEW
     const updated = todos.map((t) =>
       t.key === editingKey ? { ...t, text: editText } : t
     );
@@ -112,10 +66,6 @@ export function completed() {
     setEditingKey(null);
     setEditText("");
   }
-
-  // -------------------------
-  //  RENDER
-  // -------------------------
 
   return jsx(
     "section",
@@ -211,28 +161,49 @@ export function completed() {
     ),
 
     // FOOTER
-    jsx(
-      "footer",
-      { className: "footer" },
-
-      jsx("span", { className: "todo-count" }, itemLeft + " items left"),
-
+    todos.length > 0 &&
       jsx(
-        "ul",
-        { className: "filters" },
+        "footer",
+        { className: "footer" },
 
-        jsx("li", null, jsx("a", { className: "selected", href: "#/" }, "All")),
+        jsx("span", { className: "todo-count" }, itemLeft + " items left"),
 
-        jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+        jsx(
+          "ul",
+          { className: "filters" },
 
-        jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
-      ),
+          jsx(
+            "li",
+            null,
+            jsx("a", { className: "selected", href: "#/" }, "All")
+          ),
 
-      jsx(
-        "button",
-        { className: "clear-completed", onclick: clearCompleted },
-        "Clear completed"
+          jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+
+          jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
+        ),
+
+        jsx(
+          "button",
+          { className: "clear-completed", onclick: clearCompleted },
+          "Clear completed"
+        )
       )
-    )
   );
 }
+
+// --------------------------------------
+
+export const footer = jsx(
+  "footer",
+  { className: "info" },
+  jsx("p", null, "Double-click to edit a todo"),
+  jsx("p", null, "Created by the ranniz family"),
+  jsx(
+    "p",
+    null,
+    "Part of ",
+    jsx("a", { href: "https://github.com/" }, "Zone01")
+  )
+);
+

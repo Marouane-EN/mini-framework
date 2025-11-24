@@ -1,43 +1,22 @@
-import { useState, jsx, addRoute, Store } from "../framework/main.js";
-import { completed } from "./completed.js";
+import { useState, jsx } from "../../framework/main.js";
+import { store } from "./app.js";
 // GLOBAL STORE HOLDS TODOS
-export const store = Store({ todos: [] });
 
-function App() {
-  // ❌ OLD LOCAL STATE (REMOVED)
-  // const [todos, setTodos] = useState([]);
-
-  // ✔ todos now come from GLOBAL STORE
-  const todos = store.get().todos;
-
-  // local UI states (still fine to keep)
+export function completed() {
+  let todos = store.get().todos;
+  let currentTodos = store.get().todos.filter((t) => t.completed === true);
   const [editingKey, setEditingKey] = useState(null);
   const [editText, setEditText] = useState("");
 
-  // ✔ helper to update global todos
   function setTodos(newList) {
-    store.set({ todos: newList }); // global update + re-render
+    store.set({ todos: newList });
   }
 
-  const allChecked = todos.every((t) => t.completed === true);
+  const allChecked = currentTodos.every((t) => t.completed === true);
 
   const itemLeft = todos.filter((todo) => !todo.completed).length;
 
-  // -------------------------
-  // TODO LOGIC
-  // -------------------------
-
   function checkedTodo(todo) {
-    // ❌ OLD (local state)
-    /*
-    setTodos((prevTodos) =>
-      prevTodos.map((t) =>
-        t.key === todo.key ? { ...t, completed: !t.completed } : t
-      )
-    );
-    */
-
-    // ✔ NEW (global state)
     const updated = todos.map((t) =>
       t.key === todo.key ? { ...t, completed: !t.completed } : t
     );
@@ -51,39 +30,16 @@ function App() {
 
   function addTodo(e) {
     if (e.key === "Enter" && e.target.value.trim().length >= 2) {
-      // ❌ OLD
-      /*
-      setTodos((prevTodos) => [
-        ...prevTodos,
-        {
-          text: e.target.value,
-          completed: false,
-          key: crypto.randomUUID(),
-        },
-      ]);
-      */
-
-      // ✔ NEW
       const updated = [
         ...todos,
-        {
-          text: e.target.value,
-          completed: false,
-          key: crypto.randomUUID(),
-        },
+        { text: e.target.value, completed: false, key: crypto.randomUUID() },
       ];
-      setTodos(updated);
-
+      setTodos(updated); // safe, full array
       e.target.value = "";
     }
   }
 
   function deleteTodo(key) {
-    // ❌ OLD
-    // const updated = todos.filter((todo) => todo.key != key);
-    // setTodos(updated);
-
-    // ✔ NEW
     setTodos(todos.filter((todo) => todo.key !== key));
   }
 
@@ -97,14 +53,6 @@ function App() {
   }
 
   function finishEditing() {
-    // ❌ OLD
-    /*
-    setTodos((prev) =>
-      prev.map((t) => (t.key === editingKey ? { ...t, text: editText } : t))
-    );
-    */
-
-    // ✔ NEW
     const updated = todos.map((t) =>
       t.key === editingKey ? { ...t, text: editText } : t
     );
@@ -113,10 +61,6 @@ function App() {
     setEditingKey(null);
     setEditText("");
   }
-
-  // -------------------------
-  //  RENDER
-  // -------------------------
 
   return jsx(
     "section",
@@ -153,7 +97,7 @@ function App() {
         "ul",
         { className: "todo-list" },
 
-        ...todos.map((todo) => {
+        ...currentTodos.map((todo) => {
           return jsx(
             "li",
             { className: "todo-item", key: todo.key },
@@ -191,7 +135,7 @@ function App() {
       ),
 
       // TOGGLE ALL
-      todos.length > 0 &&
+      currentTodos.length > 0 &&
         jsx(
           "div",
           { className: "toggle-all-container" },
@@ -210,9 +154,8 @@ function App() {
           })
         )
     ),
-
-    // FOOTER
     todos.length > 0 &&
+      // FOOTER
       jsx(
         "footer",
         { className: "footer" },
@@ -242,30 +185,3 @@ function App() {
       )
   );
 }
-
-// --------------------------------------
-
-export const footer = jsx(
-  "footer",
-  { className: "info" },
-  jsx("p", null, "Double-click to edit a todo"),
-  jsx("p", null, "Created by the ranniz family"),
-  jsx(
-    "p",
-    null,
-    "Part of ",
-    jsx("a", { href: "https://github.com/" }, "Zone01")
-  )
-);
-
-// COMPLETED PAGE
-function complited() {
-  return jsx(
-    "section",
-    { className: "completed-view" },
-    jsx("h2", null, "Completed Todos")
-  );
-}
-
-addRoute("/completed", completed);
-addRoute("/", App);

@@ -102,34 +102,54 @@ export function completed() {
             "li",
             { className: "todo-item", key: todo.key },
 
-            jsx("input", {
-              type: "checkbox",
-              className: "toggle",
-              onclick: () => checkedTodo(todo),
-            }),
+            editingKey !== todo.key
+              ? jsx(
+                  "div",
+                  { className: "view" },
+                  jsx("input", {
+                    type: "checkbox",
+                    className: "toggle",
+                    onclick: () => checkedTodo(todo),
+                  }),
+                  jsx(
+                    "label",
+                    {
+                      "data-testid": "todo-item-label",
+                      ondblclick: () => startEditing(todo),
+                    },
+                    todo.text
+                  ),
 
-            editingKey === todo.key
-              ? jsx("input", {
-                  type: "text",
-                  className: "edit-input",
-                  value: editText,
-                  oninput: (e) => setEditText(e.target.value),
-                  onkeydown: (e) => e.key === "Enter" && finishEditing(),
-                  autofocus: true,
-                })
+                  jsx("button", {
+                    className: "destroy",
+                    onclick: () => deleteTodo(todo.key),
+                  })
+                )
               : jsx(
-                  "label",
-                  {
-                    className: todo.completed ? "checked completed" : "nocheck",
-                    ondblclick: () => startEditing(todo),
-                  },
-                  todo.text
-                ),
-
-            jsx("button", {
-              className: "destroy",
-              onclick: () => deleteTodo(todo.key),
-            })
+                  "div",
+                  { className: "view" },
+                  jsx(
+                    "div",
+                    { className: "input-container" },
+                    jsx("input", {
+                      type: "text",
+                      className: "new-todo",
+                      id: "todo-input",
+                      "data-testid": "text-input",
+                      value: editText,
+                      oninput: (e) => setEditText(e.target.value),
+                      onkeydown: (e) => e.key === "Enter" && finishEditing(),
+                    }),
+                    jsx(
+                      "label",
+                      {
+                        className: "visually-hidden",
+                        for: "todo-input",
+                      },
+                      todo.text
+                    )
+                  )
+                )
           );
         })
       ),

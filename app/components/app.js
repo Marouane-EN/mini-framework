@@ -191,19 +191,3 @@ export function App() {
       )
   );
 }
-
-// --------------------------------------
-
-export const footer = jsx(
-  "footer",
-  { className: "info" },
-  jsx("p", null, "Double-click to edit a todo"),
-  jsx("p", null, "Created by the ranniz family"),
-  jsx(
-    "p",
-    null,
-    "Part of ",
-    jsx("a", { href: "https://github.com/" }, "Zone01")
-  )
-);
-

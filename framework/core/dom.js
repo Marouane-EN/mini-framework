@@ -34,7 +34,6 @@ export function createElement(node) {
   }
 
   node.children.flat().forEach((child) => {
-    if (child == null || child === false) return;
     el.appendChild(createElement(child));
   });
 

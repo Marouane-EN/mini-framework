@@ -36,6 +36,7 @@ export function addRoute(path, callback) {
  */
 export function handleRouteChange() {
     const route = window.location.hash.slice(1) || '/';
+    
     if (routes[route]) {
         render(routes[route]);
     }

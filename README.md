@@ -2,7 +2,6 @@
 
 A lightweight, React-like JavaScript framework with virtual DOM, hooks, and client-side routing.
 
-
 ## Table of Contents
 
 1. [Features](#features)
@@ -21,7 +20,7 @@ A lightweight, React-like JavaScript framework with virtual DOM, hooks, and clie
 - **Virtual DOM** - Efficient DOM manipulation using a virtual representation
 - **`jsx()` Function** - Create elements using the `jsx()` function (no JSX transpiler needed)
 - **React-like Hooks** - `useState` and `useEffect` for state and side effects
-- **Key-based Reconciliation** - Optimized list rendering with key props
+- **Key-based Reconciliation** - Optimized list rendering with key props (must be unique)
 - **Client-side Routing** - Hash-based routing system
 - **Lightweight** - Minimal bundle size with no dependencies
 - **No Build Step Required** - Works directly in the browser using ES modules
@@ -41,15 +40,18 @@ User Interaction → State Change → Re-render → Virtual DOM Diff → DOM Pat
 ### The Rendering Pipeline
 
 1. **Element Creation with `jsx()` Function**
+
    - Developers call `jsx('div', props, ...children)` directly
    - Creates virtual DOM nodes (plain JavaScript objects)
    - No JSX transpiler or build step required
 
 2. **Virtual DOM Creation**
+
    - Component functions return virtual DOM trees
    - Virtual nodes contain: `{ type, props, children }`
 
 3. **Diffing Algorithm**
+
    - Compares new virtual DOM with previous virtual DOM
    - Uses **key-based reconciliation** for efficient list updates
    - Identifies minimal changes needed
@@ -62,21 +64,25 @@ User Interaction → State Change → Re-render → Virtual DOM Diff → DOM Pat
 ### Why Things Work This Way
 
 #### Virtual DOM Benefits
+
 - **Performance**: Only necessary DOM updates are performed
 - **Abstraction**: Developers think in terms of state, not manual DOM manipulation
 - **Predictability**: Same state always produces same UI
 
 #### Key-based Reconciliation
+
 - **Element Identity**: Keys tell the framework which elements are the same across renders
 - **Efficient Moves**: Moving list items doesn't destroy and recreate DOM nodes
 - **State Preservation**: Input focus, scroll position, and component state are maintained
 
 #### Hooks Pattern
+
 - **Encapsulation**: State and effects live with components
 - **Reusability**: Custom hooks can be created for shared logic
 - **Order Dependency**: Hooks must be called in the same order each render (enforced by index-based storage)
 
 #### Using `jsx()` Function Directly
+
 - **No Build Step**: Works directly in the browser with ES modules
 - **Simplicity**: No need for Babel, webpack, or other transpilers
 - **Transparency**: You see exactly what's happening - just function calls
@@ -93,20 +99,20 @@ User Interaction → State Change → Re-render → Virtual DOM Diff → DOM Pat
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>My App</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="root"></div>
     <script type="module" src="app/app.js"></script>
-</body>
+  </body>
 </html>
 ```
 
 2. Import the framework functions (no build step or JSX transpiler needed):
 
 ```javascript
-import { jsx, useState, useEffect, render } from './framework/main.js';
+import { jsx, useState, useEffect, render } from "./framework/main.js";
 ```
 
 ---
@@ -120,19 +126,21 @@ Your framework uses the **`jsx()` function** to create virtual DOM elements. You
 #### Basic Element
 
 ```javascript
-import { jsx } from './framework/main.js';
+import { jsx } from "./framework/main.js";
 
 // Creating a simple element
-const element = jsx('div', null, 'Hello World');
+const element = jsx("div", null, "Hello World");
 
 // What it creates (virtual DOM object):
 // { type: 'div', props: {}, children: ['Hello World'] }
 ```
 
 **Function Signature:**
+
 ```javascript
-jsx(type, props, ...children)
+jsx(type, props, ...children);
 ```
+
 - **`type`** (string): HTML tag name like 'div', 'span', 'button'
 - **`props`** (object|null): Element properties (className, id, events, etc.)
 - **`children`** (any): Child elements, text, or arrays of children
@@ -140,12 +148,14 @@ jsx(type, props, ...children)
 #### Element with Children
 
 ```javascript
-import { jsx } from './framework/main.js';
+import { jsx } from "./framework/main.js";
 
 // Nested elements
-const card = jsx('div', null,
-    jsx('h1', null, 'Title'),
-    jsx('p', null, 'Description')
+const card = jsx(
+  "div",
+  null,
+  jsx("h1", null, "Title"),
+  jsx("p", null, "Description")
 );
 
 // This creates:
@@ -159,20 +169,25 @@ const card = jsx('div', null,
 
 ```javascript
 // Children can be passed as multiple arguments
-const list = jsx('ul', null,
-    jsx('li', null, 'Item 1'),
-    jsx('li', null, 'Item 2'),
-    jsx('li', null, 'Item 3')
+const list = jsx(
+  "ul",
+  null,
+  jsx("li", null, "Item 1"),
+  jsx("li", null, "Item 2"),
+  jsx("li", null, "Item 3")
 );
 
 // Or as an array with spread operator
-const items = ['Apple', 'Banana', 'Cherry'];
-const fruitList = jsx('ul', null,
-    ...items.map(fruit => jsx('li', { key: fruit }, fruit))
+const items = ["Apple", "Banana", "Cherry"];
+const fruitList = jsx(
+  "ul",
+  null,
+  ...items.map((fruit) => jsx("li", { key: fruit }, fruit))
 );
 ```
 
 **How it works:**
+
 - **You call `jsx()` directly** - No JSX syntax or transpiler
 - **`jsx()` creates virtual DOM nodes** - Plain JavaScript objects
 - Each virtual node has: `{ type, props, children }`
@@ -186,53 +201,62 @@ const fruitList = jsx('ul', null,
 Attributes are passed as the second argument (props object) to the `jsx()` function:
 
 ```javascript
-import { jsx } from './framework/main.js';
+import { jsx } from "./framework/main.js";
 
 // className attribute
-const styledDiv = jsx('div', { className: 'container' }, 'Content');
+const styledDiv = jsx("div", { className: "container" }, "Content");
 // Creates: <div class="container">Content</div>
 
 // id attribute
-const uniqueDiv = jsx('div', { id: 'main-content' }, 'Content');
+const uniqueDiv = jsx("div", { id: "main-content" }, "Content");
 // Creates: <div id="main-content">Content</div>
 
 // Multiple attributes
-const multiAttr = jsx('input', { 
-    type: 'text',
-    placeholder: 'Enter name',
-    id: 'name-input',
-    className: 'form-control'
+const multiAttr = jsx("input", {
+  type: "text",
+  placeholder: "Enter name",
+  id: "name-input",
+  className: "form-control",
 });
 // Creates: <input type="text" placeholder="Enter name" id="name-input" class="form-control" />
 
 // Custom data attributes
-const dataAttr = jsx('div', { 
-    'data-user-id': '123',
-    'data-role': 'admin'
-}, 'User');
+const dataAttr = jsx(
+  "div",
+  {
+    "data-user-id": "123",
+    "data-role": "admin",
+  },
+  "User"
+);
 // Creates: <div data-user-id="123" data-role="admin">User</div>
 
 // Style as object (supported by the framework)
-const styledElement = jsx('div', { 
-    style: { 
-        color: 'red',
-        fontSize: '16px'
-    }
-}, 'Styled text');
+const styledElement = jsx(
+  "div",
+  {
+    style: {
+      color: "red",
+      fontSize: "16px",
+    },
+  },
+  "Styled text"
+);
 // Creates: <div style="color: red; font-size: 16px;">Styled text</div>
 
 // Boolean attributes
-const checkbox = jsx('input', { 
-    type: 'checkbox',
-    checked: true,
-    disabled: false
+const checkbox = jsx("input", {
+  type: "checkbox",
+  checked: true,
+  disabled: false,
 });
 
 // Null props (when element has no attributes)
-const simpleDiv = jsx('div', null, 'No attributes');
+const simpleDiv = jsx("div", null, "No attributes");
 ```
 
 **How it works:**
+
 - Attributes are stored in the `props` object (second parameter)
 - `className` maps to DOM's `className` property
 - `id` maps to DOM's `id` property
@@ -248,80 +272,87 @@ const simpleDiv = jsx('div', null, 'No attributes');
 Event handlers are passed in the props object with "on" prefix:
 
 ```javascript
-import { jsx, useState } from './framework/main.js';
+import { jsx, useState } from "./framework/main.js";
 
 function Counter() {
-    const [count, setCount] = useState(0);
+  const [count, setCount] = useState(0);
 
-    // Click event handler
-    const handleClick = () => {
-        setCount(count + 1);
-    };
+  // Click event handler
+  const handleClick = () => {
+    setCount(count + 1);
+  };
 
-    // Event with parameter
-    const handleReset = () => {
-        setCount(0);
-    };
+  // Event with parameter
+  const handleReset = () => {
+    setCount(0);
+  };
 
-    return jsx('div', null,
-        jsx('h1', null, 'Count: ', count),
-        jsx('button', { onClick: handleClick }, 'Increment'),
-        jsx('button', { onClick: handleReset }, 'Reset')
-    );
+  return jsx(
+    "div",
+    null,
+    jsx("h1", null, "Count: ", count),
+    jsx("button", { onClick: handleClick }, "Increment"),
+    jsx("button", { onClick: handleReset }, "Reset")
+  );
 }
 ```
 
 #### Supported Events
 
 ```javascript
-import { jsx } from './framework/main.js';
+import { jsx } from "./framework/main.js";
 
 // Mouse events
-jsx('button', { onClick: handleClick }, 'Click')
-jsx('div', { onMouseOver: handleHover }, 'Hover')
-jsx('div', { onMouseOut: handleOut }, 'Leave')
-jsx('div', { onMouseDown: handleDown }, 'Press')
-jsx('div', { onMouseUp: handleUp }, 'Release')
+jsx("button", { onClick: handleClick }, "Click");
+jsx("div", { onMouseOver: handleHover }, "Hover");
+jsx("div", { onMouseOut: handleOut }, "Leave");
+jsx("div", { onMouseDown: handleDown }, "Press");
+jsx("div", { onMouseUp: handleUp }, "Release");
 
 // Input events
-jsx('input', { onChange: handleChange })
-jsx('input', { onInput: handleInput })
-jsx('input', { onFocus: handleFocus })
-jsx('input', { onBlur: handleBlur })
+jsx("input", { onChange: handleChange });
+jsx("input", { onInput: handleInput });
+jsx("input", { onFocus: handleFocus });
+jsx("input", { onBlur: handleBlur });
 
 // Form events
-jsx('form', { onSubmit: handleSubmit },
-    jsx('input', { type: 'text' }),
-    jsx('button', { type: 'submit' }, 'Submit')
-)
+jsx(
+  "form",
+  { onSubmit: handleSubmit },
+  jsx("input", { type: "text" }),
+  jsx("button", { type: "submit" }, "Submit")
+);
 
 // Keyboard events
-jsx('input', { onKeyDown: handleKeyDown })
-jsx('input', { onKeyUp: handleKeyUp })
-jsx('input', { onKeyPress: handleKeyPress })
+jsx("input", { onKeyDown: handleKeyDown });
+jsx("input", { onKeyUp: handleKeyUp });
+jsx("input", { onKeyPress: handleKeyPress });
 
 // Example with event object
 const handleInputChange = (event) => {
-    console.log('Input value:', event.target.value);
+  console.log("Input value:", event.target.value);
 };
 
-jsx('input', { 
-    type: 'text',
-    onChange: handleInputChange
-})
+jsx("input", {
+  type: "text",
+  onChange: handleInputChange,
+});
 
 // Preventing default behavior
 const handleFormSubmit = (event) => {
-    event.preventDefault();
-    console.log('Form submitted');
+  event.preventDefault();
+  console.log("Form submitted");
 };
 
-jsx('form', { onSubmit: handleFormSubmit },
-    jsx('button', { type: 'submit' }, 'Submit')
-)
+jsx(
+  "form",
+  { onSubmit: handleFormSubmit },
+  jsx("button", { type: "submit" }, "Submit")
+);
 ```
 
 **How it works:**
+
 1. Props starting with "on" are detected (e.g., `onClick`)
 2. The "on" prefix is removed: `onClick` → `Click`
 3. Converted to lowercase: `Click` → `click`
@@ -336,22 +367,30 @@ jsx('form', { onSubmit: handleFormSubmit },
 Elements can be deeply nested by passing `jsx()` calls as children:
 
 ```javascript
-import { jsx } from './framework/main.js';
+import { jsx } from "./framework/main.js";
 
 function UserCard({ user }) {
-    return jsx('div', { className: 'card' },
-        jsx('div', { className: 'card-header' },
-            jsx('img', { src: user.avatar, alt: user.name }),
-            jsx('h2', null, user.name)
-        ),
-        jsx('div', { className: 'card-body' },
-            jsx('p', null, user.bio),
-            jsx('div', { className: 'card-footer' },
-                jsx('span', null, 'Followers: ', user.followers),
-                jsx('span', null, 'Following: ', user.following)
-            )
-        )
-    );
+  return jsx(
+    "div",
+    { className: "card" },
+    jsx(
+      "div",
+      { className: "card-header" },
+      jsx("img", { src: user.avatar, alt: user.name }),
+      jsx("h2", null, user.name)
+    ),
+    jsx(
+      "div",
+      { className: "card-body" },
+      jsx("p", null, user.bio),
+      jsx(
+        "div",
+        { className: "card-footer" },
+        jsx("span", null, "Followers: ", user.followers),
+        jsx("span", null, "Following: ", user.following)
+      )
+    )
+  );
 }
 
 // This creates the structure:
@@ -375,22 +414,28 @@ function UserCard({ user }) {
 Use `key` props for efficient list rendering. Pass the key in the props object:
 
 ```javascript
-import { jsx, useState } from './framework/main.js';
+import { jsx, useState } from "./framework/main.js";
 
 function TodoList() {
-    const [todos, setTodos] = useState([
-        { id: 1, text: 'Learn framework', done: false },
-        { id: 2, text: 'Build project', done: false }
-    ]);
+  const [todos, setTodos] = useState([
+    { id: 1, text: "Learn framework", done: false },
+    { id: 2, text: "Build project", done: false },
+  ]);
 
-    return jsx('ul', null,
-        ...todos.map(todo => 
-            jsx('li', { 
-                key: todo.id,
-                className: todo.done ? 'done' : ''
-            }, todo.text)
-        )
-    );
+  return jsx(
+    "ul",
+    null,
+    ...todos.map((todo) =>
+      jsx(
+        "li",
+        {
+          key: todo.id,
+          className: todo.done ? "done" : "",
+        },
+        todo.text
+      )
+    )
+  );
 }
 
 // Each list item becomes:
@@ -399,6 +444,7 @@ function TodoList() {
 ```
 
 **Why keys matter:**
+
 - Without keys: Framework uses index-based diffing (slower, can cause bugs)
 - With keys: Framework tracks elements by identity (faster, preserves state)
 - When list reorders: DOM nodes are moved, not recreated
@@ -406,24 +452,26 @@ function TodoList() {
 #### Complex Nesting Example
 
 ```javascript
-import { jsx } from './framework/main.js';
+import { jsx } from "./framework/main.js";
 
 function Navigation() {
-    const links = [
-        { id: 1, href: '#/', text: 'Home' },
-        { id: 2, href: '#/about', text: 'About' },
-        { id: 3, href: '#/contact', text: 'Contact' }
-    ];
+  const links = [
+    { id: 1, href: "#/", text: "Home" },
+    { id: 2, href: "#/about", text: "About" },
+    { id: 3, href: "#/contact", text: "Contact" },
+  ];
 
-    return jsx('nav', { className: 'navbar' },
-        jsx('ul', null,
-            ...links.map(link =>
-                jsx('li', { key: link.id },
-                    jsx('a', { href: link.href }, link.text)
-                )
-            )
-        )
-    );
+  return jsx(
+    "nav",
+    { className: "navbar" },
+    jsx(
+      "ul",
+      null,
+      ...links.map((link) =>
+        jsx("li", { key: link.id }, jsx("a", { href: link.href }, link.text))
+      )
+    )
+  );
 }
 
 // Creates:
@@ -451,9 +499,11 @@ const [state, setState] = useState(initialValue);
 ```
 
 **Parameters:**
+
 - `initialValue` - Initial state value (any type)
 
 **Returns:**
+
 - `[state, setState]` - Current state and setter function
 
 **Examples:**
@@ -462,19 +512,20 @@ const [state, setState] = useState(initialValue);
 // Number state
 const [count, setCount] = useState(0);
 setCount(5); // Direct value
-setCount(prev => prev + 1); // Functional update
+setCount((prev) => prev + 1); // Functional update
 
 // Object state
-const [user, setUser] = useState({ name: '', age: 0 });
-setUser({ name: 'John', age: 30 });
+const [user, setUser] = useState({ name: "", age: 0 });
+setUser({ name: "John", age: 30 });
 
 // Array state
 const [items, setItems] = useState([]);
 setItems([...items, newItem]); // Add item
-setItems(items.filter(item => item.id !== id)); // Remove item
+setItems(items.filter((item) => item.id !== id)); // Remove item
 ```
 
 **Rules:**
+
 - Must be called in the same order every render
 - Don't call inside loops, conditions, or nested functions
 - Calling `setState` triggers a re-render
@@ -487,14 +538,15 @@ Performs side effects after render.
 
 ```javascript
 useEffect(() => {
-    // Effect code
-    return () => {
-        // Cleanup (optional)
-    };
+  // Effect code
+  return () => {
+    // Cleanup (optional)
+  };
 }, [dependencies]);
 ```
 
 **Parameters:**
+
 - `callback` - Function to run after render
 - `dependencies` - Array of values that trigger re-run when changed
 
@@ -503,32 +555,33 @@ useEffect(() => {
 ```javascript
 // Run once on mount
 useEffect(() => {
-    console.log('Component mounted');
+  console.log("Component mounted");
 }, []);
 
 // Run when state changes
 useEffect(() => {
-    document.title = `Count: ${count}`;
+  document.title = `Count: ${count}`;
 }, [count]);
 
 // Multiple dependencies
 useEffect(() => {
-    fetchUserData(userId, filter);
+  fetchUserData(userId, filter);
 }, [userId, filter]);
 
 // With cleanup
 useEffect(() => {
-    const timer = setInterval(() => {
-        console.log('Tick');
-    }, 1000);
-    
-    return () => {
-        clearInterval(timer); // Cleanup on unmount
-    };
+  const timer = setInterval(() => {
+    console.log("Tick");
+  }, 1000);
+
+  return () => {
+    clearInterval(timer); // Cleanup on unmount
+  };
 }, []);
 ```
 
 **How it works:**
+
 - Dependencies are compared using shallow equality (`===`)
 - If any dependency changed, effect runs
 - Effect runs after DOM updates are applied
@@ -545,52 +598,56 @@ const store = Store(initialState);
 ```
 
 **Parameters:**
+
 - `initialState` - Initial state object (optional, defaults to `null`)
 
 **Returns:**
+
 - Object with `get()` and `set()` methods
 
 **Methods:**
+
 - `get()` - Returns the current state
 - `set(newState)` - Merges `newState` with current state and triggers re-render
 
 **Examples:**
 
 ```javascript
-import { Store, jsx } from './framework/main.js';
+import { Store, jsx } from "./framework/main.js";
 
 // Create a store
-const userStore = Store({ name: 'Guest', loggedIn: false });
+const userStore = Store({ name: "Guest", loggedIn: false });
 
 // In any component - read state
 function Header() {
-    const user = userStore.get();
-    return jsx('div', null, `Welcome, ${user.name}`);
+  const user = userStore.get();
+  return jsx("div", null, `Welcome, ${user.name}`);
 }
 
 // In any component - update state
 function LoginButton() {
-    const handleLogin = () => {
-        userStore.set({ name: 'John', loggedIn: true });
-    };
-    
-    return jsx('button', { onclick: handleLogin }, 'Login');
+  const handleLogin = () => {
+    userStore.set({ name: "John", loggedIn: true });
+  };
+
+  return jsx("button", { onclick: handleLogin }, "Login");
 }
 
 // Multiple stores for different concerns
-const themeStore = Store({ mode: 'light', fontSize: 14 });
+const themeStore = Store({ mode: "light", fontSize: 14 });
 const cartStore = Store({ items: [], total: 0 });
 
 // Update multiple properties
-themeStore.set({ mode: 'dark' }); // Only updates mode, keeps fontSize
+themeStore.set({ mode: "dark" }); // Only updates mode, keeps fontSize
 cartStore.set({ items: [...items, newItem], total: newTotal });
 
 // Store with no initial state
 const tempStore = Store(); // state is null initially
-tempStore.set({ data: 'value' }); // Now state is { data: 'value' }
+tempStore.set({ data: "value" }); // Now state is { data: 'value' }
 ```
 
 **How it works:**
+
 - Creates a closure with private state
 - `set()` merges new state with existing state using spread operator
 - Calling `set()` automatically triggers a re-render
@@ -598,6 +655,7 @@ tempStore.set({ data: 'value' }); // Now state is { data: 'value' }
 - Unlike Context API, stores don't require Provider wrappers
 
 **When to use:**
+
 - ✅ Global app state (theme, auth, settings)
 - ✅ Shared data across multiple components
 - ✅ Simple state management without boilerplate
@@ -612,14 +670,15 @@ tempStore.set({ data: 'value' }); // Now state is { data: 'value' }
 Registers a route with its component.
 
 ```javascript
-import { addRoute } from './framework/main.js';
+import { addRoute } from "./framework/main.js";
 
-addRoute('/', HomePage);
-addRoute('/about', AboutPage);
-addRoute('/users', UsersPage);
+addRoute("/", HomePage);
+addRoute("/about", AboutPage);
+addRoute("/users", UsersPage);
 ```
 
 **Parameters:**
+
 - `path` - URL path (without #)
 - `component` - Function that returns jsx elements
 
@@ -627,43 +686,47 @@ addRoute('/users', UsersPage);
 
 ```javascript
 // In HTML
-jsx('a', { href: '#/' }, 'Home')
-jsx('a', { href: '#/about' }, 'About')
+jsx("a", { href: "#/" }, "Home");
+jsx("a", { href: "#/about" }, "About");
 
 // In JavaScript
-window.location.hash = '#/about';
+window.location.hash = "#/about";
 ```
 
 **Example:**
 
 ```javascript
-import { jsx, addRoute } from './framework/main.js';
+import { jsx, addRoute } from "./framework/main.js";
 
 function App() {
-    return jsx('div', null,
-        jsx('nav', null,
-            jsx('a', { href: '#/' }, 'Home'),
-            jsx('a', { href: '#/about' }, 'About'),
-            jsx('a', { href: '#/contact' }, 'Contact')
-        )
-    );
+  return jsx(
+    "div",
+    null,
+    jsx(
+      "nav",
+      null,
+      jsx("a", { href: "#/" }, "Home"),
+      jsx("a", { href: "#/about" }, "About"),
+      jsx("a", { href: "#/contact" }, "Contact")
+    )
+  );
 }
 
 function HomePage() {
-    return jsx('h1', null, 'Welcome Home');
+  return jsx("h1", null, "Welcome Home");
 }
 
 function AboutPage() {
-    return jsx('h1', null, 'About Us');
+  return jsx("h1", null, "About Us");
 }
 
 function ContactPage() {
-    return jsx('h1', null, 'Contact Us');
+  return jsx("h1", null, "Contact Us");
 }
 
-addRoute('/', HomePage);
-addRoute('/about', AboutPage);
-addRoute('/contact', ContactPage);
+addRoute("/", HomePage);
+addRoute("/about", AboutPage);
+addRoute("/contact", ContactPage);
 ```
 
 ---
@@ -675,11 +738,11 @@ addRoute('/contact', ContactPage);
 Renders the root component.
 
 ```javascript
-import { jsx, render } from './framework/main.js';
-import { render as renderApp } from './framework/core/render.js';
+import { jsx, render } from "./framework/main.js";
+import { render as renderApp } from "./framework/core/render.js";
 
 function App() {
-    return jsx('h1', null, 'Hello World');
+  return jsx("h1", null, "Hello World");
 }
 
 renderApp(App);
@@ -694,68 +757,76 @@ renderApp(App);
 ### Example 1: Counter with Multiple Features
 
 ```javascript
-import { jsx, useState, useEffect } from './framework/main.js';
-import { render } from './framework/core/render.js';
+import { jsx, useState, useEffect } from "./framework/main.js";
+import { render } from "./framework/core/render.js";
 
 function Counter() {
-    const [count, setCount] = useState(0);
-    const [step, setStep] = useState(1);
-    const [history, setHistory] = useState([]);
+  const [count, setCount] = useState(0);
+  const [step, setStep] = useState(1);
+  const [history, setHistory] = useState([]);
 
-    // Update document title
-    useEffect(() => {
-        document.title = `Count: ${count}`;
-    }, [count]);
+  // Update document title
+  useEffect(() => {
+    document.title = `Count: ${count}`;
+  }, [count]);
 
-    // Track history
-    useEffect(() => {
-        setHistory([...history, count]);
-    }, [count]);
+  // Track history
+  useEffect(() => {
+    setHistory([...history, count]);
+  }, [count]);
 
-    const increment = () => {
-        setCount(count + step);
-    };
+  const increment = () => {
+    setCount(count + step);
+  };
 
-    const decrement = () => {
-        setCount(count - step);
-    };
+  const decrement = () => {
+    setCount(count - step);
+  };
 
-    const reset = () => {
-        setCount(0);
-        setHistory([]);
-    };
+  const reset = () => {
+    setCount(0);
+    setHistory([]);
+  };
 
-    const handleStepChange = (e) => {
-        setStep(Number(e.target.value));
-    };
+  const handleStepChange = (e) => {
+    setStep(Number(e.target.value));
+  };
 
-    return jsx('div', { className: 'counter' },
-        jsx('h1', null, 'Count: ', count),
-        
-        jsx('div', null,
-            jsx('label', null, 'Step: '),
-            jsx('input', { 
-                type: 'number',
-                value: step,
-                onChange: handleStepChange
-            })
-        ),
+  return jsx(
+    "div",
+    { className: "counter" },
+    jsx("h1", null, "Count: ", count),
 
-        jsx('div', { className: 'buttons' },
-            jsx('button', { onClick: decrement }, '-', step),
-            jsx('button', { onClick: reset }, 'Reset'),
-            jsx('button', { onClick: increment }, '+', step)
-        ),
+    jsx(
+      "div",
+      null,
+      jsx("label", null, "Step: "),
+      jsx("input", {
+        type: "number",
+        value: step,
+        onChange: handleStepChange,
+      })
+    ),
 
-        jsx('div', { className: 'history' },
-            jsx('h3', null, 'History:'),
-            jsx('ul', null,
-                ...history.map((value, index) => 
-                    jsx('li', { key: index }, value)
-                )
-            )
-        )
-    );
+    jsx(
+      "div",
+      { className: "buttons" },
+      jsx("button", { onClick: decrement }, "-", step),
+      jsx("button", { onClick: reset }, "Reset"),
+      jsx("button", { onClick: increment }, "+", step)
+    ),
+
+    jsx(
+      "div",
+      { className: "history" },
+      jsx("h3", null, "History:"),
+      jsx(
+        "ul",
+        null,
+        ...history.map((value, index) => jsx("li", { key: index }, value))
+      )
+    )
+  );
 }
 
 render(Counter);
@@ -766,92 +837,123 @@ render(Counter);
 ### Example 2: Todo List with Key-based Reconciliation
 
 ```javascript
-import { jsx, useState } from './framework/main.js';
-import { render } from './framework/core/render.js';
+import { jsx, useState } from "./framework/main.js";
+import { render } from "./framework/core/render.js";
 
 function TodoApp() {
-    const [todos, setTodos] = useState([]);
-    const [inputValue, setInputValue] = useState('');
-    const [filter, setFilter] = useState('all'); // all, active, completed
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [filter, setFilter] = useState("all"); // all, active, completed
 
-    const addTodo = (e) => {
-        e.preventDefault();
-        if (inputValue.trim()) {
-            const newTodo = {
-                id: Date.now(),
-                text: inputValue,
-                completed: false
-            };
-            setTodos([...todos, newTodo]);
-            setInputValue('');
-        }
-    };
+  const addTodo = (e) => {
+    e.preventDefault();
+    if (inputValue.trim()) {
+      const newTodo = {
+        id: Date.now(),
+        text: inputValue,
+        completed: false,
+      };
+      setTodos([...todos, newTodo]);
+      setInputValue("");
+    }
+  };
 
-    const toggleTodo = (id) => {
-        setTodos(todos.map(todo =>
-            todo.id === id ? { ...todo, completed: !todo.completed } : todo
-        ));
-    };
-
-    const deleteTodo = (id) => {
-        setTodos(todos.filter(todo => todo.id !== id));
-    };
-
-    const filteredTodos = todos.filter(todo => {
-        if (filter === 'active') return !todo.completed;
-        if (filter === 'completed') return todo.completed;
-        return true;
-    });
-
-    return jsx('div', { className: 'todo-app' },
-        jsx('h1', null, 'Todo List'),
-
-        jsx('form', { onSubmit: addTodo },
-            jsx('input', {
-                type: 'text',
-                placeholder: 'What needs to be done?',
-                value: inputValue,
-                onChange: (e) => setInputValue(e.target.value)
-            }),
-            jsx('button', { type: 'submit' }, 'Add')
-        ),
-
-        jsx('div', { className: 'filters' },
-            jsx('button', { 
-                className: filter === 'all' ? 'active' : '',
-                onClick: () => setFilter('all')
-            }, 'All (', todos.length, ')'),
-            
-            jsx('button', { 
-                className: filter === 'active' ? 'active' : '',
-                onClick: () => setFilter('active')
-            }, 'Active (', todos.filter(t => !t.completed).length, ')'),
-            
-            jsx('button', { 
-                className: filter === 'completed' ? 'active' : '',
-                onClick: () => setFilter('completed')
-            }, 'Completed (', todos.filter(t => t.completed).length, ')')
-        ),
-
-        jsx('ul', { className: 'todo-list' },
-            ...filteredTodos.map(todo =>
-                jsx('li', { 
-                    key: todo.id,
-                    className: todo.completed ? 'completed' : ''
-                },
-                    jsx('input', {
-                        type: 'checkbox',
-                        checked: todo.completed,
-                        onChange: () => toggleTodo(todo.id)
-                    }),
-                    jsx('span', null, todo.text),
-                    jsx('button', { onClick: () => deleteTodo(todo.id) }, 'Delete')
-                )
-            )
-        ),
-
-        todos.length === 0 && jsx('p', { className: 'empty' }, 'No todos yet. Add one above!')
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
     );
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === "active") return !todo.completed;
+    if (filter === "completed") return todo.completed;
+    return true;
+  });
+
+  return jsx(
+    "div",
+    { className: "todo-app" },
+    jsx("h1", null, "Todo List"),
+
+    jsx(
+      "form",
+      { onSubmit: addTodo },
+      jsx("input", {
+        type: "text",
+        placeholder: "What needs to be done?",
+        value: inputValue,
+        onChange: (e) => setInputValue(e.target.value),
+      }),
+      jsx("button", { type: "submit" }, "Add")
+    ),
+
+    jsx(
+      "div",
+      { className: "filters" },
+      jsx(
+        "button",
+        {
+          className: filter === "all" ? "active" : "",
+          onClick: () => setFilter("all"),
+        },
+        "All (",
+        todos.length,
+        ")"
+      ),
+
+      jsx(
+        "button",
+        {
+          className: filter === "active" ? "active" : "",
+          onClick: () => setFilter("active"),
+        },
+        "Active (",
+        todos.filter((t) => !t.completed).length,
+        ")"
+      ),
+
+      jsx(
+        "button",
+        {
+          className: filter === "completed" ? "active" : "",
+          onClick: () => setFilter("completed"),
+        },
+        "Completed (",
+        todos.filter((t) => t.completed).length,
+        ")"
+      )
+    ),
+
+    jsx(
+      "ul",
+      { className: "todo-list" },
+      ...filteredTodos.map((todo) =>
+        jsx(
+          "li",
+          {
+            key: todo.id,
+            className: todo.completed ? "completed" : "",
+          },
+          jsx("input", {
+            type: "checkbox",
+            checked: todo.completed,
+            onChange: () => toggleTodo(todo.id),
+          }),
+          jsx("span", null, todo.text),
+          jsx("button", { onClick: () => deleteTodo(todo.id) }, "Delete")
+        )
+      )
+    ),
+
+    todos.length === 0 &&
+      jsx("p", { className: "empty" }, "No todos yet. Add one above!")
+  );
 }
 
 render(TodoApp);
@@ -862,158 +964,194 @@ render(TodoApp);
 ### Example 3: Multi-page App with Routing
 
 ```javascript
-import { jsx, useState, useEffect, addRoute } from './framework/main.js';
+import { jsx, useState, useEffect, addRoute } from "./framework/main.js";
 
 // Navigation Component
 function Navigation() {
-    return jsx('nav', { className: 'navbar' },
-        jsx('a', { href: '#/' }, 'Home'),
-        jsx('a', { href: '#/about' }, 'About'),
-        jsx('a', { href: '#/users' }, 'Users'),
-        jsx('a', { href: '#/contact' }, 'Contact')
-    );
+  return jsx(
+    "nav",
+    { className: "navbar" },
+    jsx("a", { href: "#/" }, "Home"),
+    jsx("a", { href: "#/about" }, "About"),
+    jsx("a", { href: "#/users" }, "Users"),
+    jsx("a", { href: "#/contact" }, "Contact")
+  );
 }
 
 // Home Page
 function HomePage() {
-    return jsx('div', null,
-        Navigation(),
-        jsx('main', null,
-            jsx('h1', null, 'Welcome Home'),
-            jsx('p', null, 'This is the home page of our mini framework demo.')
-        )
-    );
+  return jsx(
+    "div",
+    null,
+    Navigation(),
+    jsx(
+      "main",
+      null,
+      jsx("h1", null, "Welcome Home"),
+      jsx("p", null, "This is the home page of our mini framework demo.")
+    )
+  );
 }
 
 // About Page
 function AboutPage() {
-    const features = [
-        'Virtual DOM',
-        'Hooks (useState, useEffect)',
-        'Key-based reconciliation',
-        'Client-side routing'
-    ];
+  const features = [
+    "Virtual DOM",
+    "Hooks (useState, useEffect)",
+    "Key-based reconciliation",
+    "Client-side routing",
+  ];
 
-    return jsx('div', null,
-        Navigation(),
-        jsx('main', null,
-            jsx('h1', null, 'About Us'),
-            jsx('p', null, 'We built a lightweight React-like framework!'),
-            jsx('ul', null,
-                ...features.map(feature => jsx('li', { key: feature }, feature))
-            )
-        )
-    );
+  return jsx(
+    "div",
+    null,
+    Navigation(),
+    jsx(
+      "main",
+      null,
+      jsx("h1", null, "About Us"),
+      jsx("p", null, "We built a lightweight React-like framework!"),
+      jsx(
+        "ul",
+        null,
+        ...features.map((feature) => jsx("li", { key: feature }, feature))
+      )
+    )
+  );
 }
 
 // Users Page with Data Fetching
 function UsersPage() {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // Simulate API call
-        setTimeout(() => {
-            setUsers([
-                { id: 1, name: 'Alice', email: 'alice@example.com' },
-                { id: 2, name: 'Bob', email: 'bob@example.com' },
-                { id: 3, name: 'Charlie', email: 'charlie@example.com' }
-            ]);
-            setLoading(false);
-        }, 1000);
-    }, []);
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setUsers([
+        { id: 1, name: "Alice", email: "alice@example.com" },
+        { id: 2, name: "Bob", email: "bob@example.com" },
+        { id: 3, name: "Charlie", email: "charlie@example.com" },
+      ]);
+      setLoading(false);
+    }, 1000);
+  }, []);
 
-    return jsx('div', null,
-        Navigation(),
-        jsx('main', null,
-            jsx('h1', null, 'Users'),
-            loading ? 
-                jsx('p', null, 'Loading users...') :
-                jsx('ul', { className: 'user-list' },
-                    ...users.map(user =>
-                        jsx('li', { key: user.id },
-                            jsx('strong', null, user.name),
-                            jsx('span', null, user.email)
-                        )
-                    )
-                )
-        )
-    );
+  return jsx(
+    "div",
+    null,
+    Navigation(),
+    jsx(
+      "main",
+      null,
+      jsx("h1", null, "Users"),
+      loading
+        ? jsx("p", null, "Loading users...")
+        : jsx(
+            "ul",
+            { className: "user-list" },
+            ...users.map((user) =>
+              jsx(
+                "li",
+                { key: user.id },
+                jsx("strong", null, user.name),
+                jsx("span", null, user.email)
+              )
+            )
+          )
+    )
+  );
 }
 
 // Contact Page with Form
 function ContactPage() {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
-    const [submitted, setSubmitted] = useState(false);
+  };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setFormData({ name: "", email: "", message: "" });
+    }, 3000);
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Form submitted:', formData);
-        setSubmitted(true);
-        setTimeout(() => {
-            setSubmitted(false);
-            setFormData({ name: '', email: '', message: '' });
-        }, 3000);
-    };
-
-    return jsx('div', null,
-        Navigation(),
-        jsx('main', null,
-            jsx('h1', null, 'Contact Us'),
-            submitted ? 
-                jsx('p', { className: 'success' }, "Thank you! We'll be in touch soon.") :
-                jsx('form', { onSubmit: handleSubmit },
-                    jsx('div', null,
-                        jsx('label', null, 'Name:'),
-                        jsx('input', {
-                            type: 'text',
-                            name: 'name',
-                            value: formData.name,
-                            onChange: handleChange,
-                            required: true
-                        })
-                    ),
-                    jsx('div', null,
-                        jsx('label', null, 'Email:'),
-                        jsx('input', {
-                            type: 'email',
-                            name: 'email',
-                            value: formData.email,
-                            onChange: handleChange,
-                            required: true
-                        })
-                    ),
-                    jsx('div', null,
-                        jsx('label', null, 'Message:'),
-                        jsx('textarea', {
-                            name: 'message',
-                            value: formData.message,
-                            onChange: handleChange,
-                            required: true
-                        })
-                    ),
-                    jsx('button', { type: 'submit' }, 'Send Message')
-                )
-        )
-    );
+  return jsx(
+    "div",
+    null,
+    Navigation(),
+    jsx(
+      "main",
+      null,
+      jsx("h1", null, "Contact Us"),
+      submitted
+        ? jsx(
+            "p",
+            { className: "success" },
+            "Thank you! We'll be in touch soon."
+          )
+        : jsx(
+            "form",
+            { onSubmit: handleSubmit },
+            jsx(
+              "div",
+              null,
+              jsx("label", null, "Name:"),
+              jsx("input", {
+                type: "text",
+                name: "name",
+                value: formData.name,
+                onChange: handleChange,
+                required: true,
+              })
+            ),
+            jsx(
+              "div",
+              null,
+              jsx("label", null, "Email:"),
+              jsx("input", {
+                type: "email",
+                name: "email",
+                value: formData.email,
+                onChange: handleChange,
+                required: true,
+              })
+            ),
+            jsx(
+              "div",
+              null,
+              jsx("label", null, "Message:"),
+              jsx("textarea", {
+                name: "message",
+                value: formData.message,
+                onChange: handleChange,
+                required: true,
+              })
+            ),
+            jsx("button", { type: "submit" }, "Send Message")
+          )
+    )
+  );
 }
 
 // Register routes
-addRoute('/', HomePage);
-addRoute('/about', AboutPage);
-addRoute('/users', UsersPage);
-addRoute('/contact', ContactPage);
+addRoute("/", HomePage);
+addRoute("/about", AboutPage);
+addRoute("/users", UsersPage);
+addRoute("/contact", ContactPage);
 ```
 
 ---
@@ -1021,80 +1159,92 @@ addRoute('/contact', ContactPage);
 ### Example 4: Reusable Custom Components
 
 ```javascript
-import { jsx, useState } from './framework/main.js';
-import { render } from './framework/core/render.js';
+import { jsx, useState } from "./framework/main.js";
+import { render } from "./framework/core/render.js";
 
 // Button Component
-function Button({ children, onClick, variant = 'primary' }) {
-    return jsx('button', { 
-        className: `btn btn-${variant}`,
-        onClick: onClick
-    }, children);
+function Button({ children, onClick, variant = "primary" }) {
+  return jsx(
+    "button",
+    {
+      className: `btn btn-${variant}`,
+      onClick: onClick,
+    },
+    children
+  );
 }
 
 // Card Component
 function Card({ title, children }) {
-    return jsx('div', { className: 'card' },
-        jsx('div', { className: 'card-header' },
-            jsx('h3', null, title)
-        ),
-        jsx('div', { className: 'card-body' }, children)
-    );
+  return jsx(
+    "div",
+    { className: "card" },
+    jsx("div", { className: "card-header" }, jsx("h3", null, title)),
+    jsx("div", { className: "card-body" }, children)
+  );
 }
 
 // Modal Component
 function Modal({ isOpen, onClose, title, children }) {
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    return jsx('div', { 
-        className: 'modal-overlay',
-        onClick: onClose
+  return jsx(
+    "div",
+    {
+      className: "modal-overlay",
+      onClick: onClose,
     },
-        jsx('div', { 
-            className: 'modal-content',
-            onClick: (e) => e.stopPropagation()
-        },
-            jsx('div', { className: 'modal-header' },
-                jsx('h2', null, title),
-                jsx('button', { onClick: onClose }, '×')
-            ),
-            jsx('div', { className: 'modal-body' }, children)
-        )
-    );
+    jsx(
+      "div",
+      {
+        className: "modal-content",
+        onClick: (e) => e.stopPropagation(),
+      },
+      jsx(
+        "div",
+        { className: "modal-header" },
+        jsx("h2", null, title),
+        jsx("button", { onClick: onClose }, "×")
+      ),
+      jsx("div", { className: "modal-body" }, children)
+    )
+  );
 }
 
 // Using the components
 function App() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    return jsx('div', { className: 'app' },
-        Card({ 
-            title: 'Welcome',
-            children: [
-                jsx('p', { key: 'p' }, 'This is a reusable card component.'),
-                Button({ 
-                    key: 'btn',
-                    onClick: () => setIsModalOpen(true),
-                    children: 'Open Modal'
-                })
-            ]
+  return jsx(
+    "div",
+    { className: "app" },
+    Card({
+      title: "Welcome",
+      children: [
+        jsx("p", { key: "p" }, "This is a reusable card component."),
+        Button({
+          key: "btn",
+          onClick: () => setIsModalOpen(true),
+          children: "Open Modal",
         }),
+      ],
+    }),
 
-        Modal({ 
-            isOpen: isModalOpen,
-            onClose: () => setIsModalOpen(false),
-            title: 'Modal Title',
-            children: [
-                jsx('p', { key: 'p' }, 'This is modal content!'),
-                Button({ 
-                    key: 'btn',
-                    variant: 'secondary',
-                    onClick: () => setIsModalOpen(false),
-                    children: 'Close'
-                })
-            ]
-        })
-    );
+    Modal({
+      isOpen: isModalOpen,
+      onClose: () => setIsModalOpen(false),
+      title: "Modal Title",
+      children: [
+        jsx("p", { key: "p" }, "This is modal content!"),
+        Button({
+          key: "btn",
+          variant: "secondary",
+          onClick: () => setIsModalOpen(false),
+          children: "Close",
+        }),
+      ],
+    })
+  );
 }
 
 render(App);
@@ -1119,21 +1269,25 @@ render(App);
 ```javascript
 // ❌ Bad: One large component
 function BigComponent() {
-    return jsx('div', null,
-        // 200 lines of nested jsx() calls...
-    );
+  return jsx(
+    "div",
+    null
+    // 200 lines of nested jsx() calls...
+  );
 }
 
 // ✅ Good: Split into smaller components
-function Header() { /* ... */ }
-function Content() { /* ... */ }
-function Footer() { /* ... */ }
+function Header() {
+  /* ... */
+}
+function Content() {
+  /* ... */
+}
+function Footer() {
+  /* ... */
+}
 function App() {
-    return jsx('div', null,
-        Header(),
-        Content(),
-        Footer()
-    );
+  return jsx("div", null, Header(), Content(), Footer());
 }
 ```
 
@@ -1144,7 +1298,7 @@ function App() {
 setCount(count + 1);
 
 // ✅ Good: Functional update
-setCount(prev => prev + 1);
+setCount((prev) => prev + 1);
 ```
 
 ### 4. Optimize Effect Dependencies
@@ -1152,12 +1306,12 @@ setCount(prev => prev + 1);
 ```javascript
 // ❌ Bad: Missing dependencies
 useEffect(() => {
-    console.log(count);
+  console.log(count);
 }, []); // count is used but not in dependencies
 
 // ✅ Good: All dependencies listed
 useEffect(() => {
-    console.log(count);
+  console.log(count);
 }, [count]);
 ```
 
@@ -1165,10 +1319,10 @@ useEffect(() => {
 
 ```javascript
 // ✅ Good: Clear intent
-jsx('div', null, 'Content')
+jsx("div", null, "Content");
 
 // ❌ Unnecessary: Empty object
-jsx('div', {}, 'Content')
+jsx("div", {}, "Content");
 ```
 
 ---

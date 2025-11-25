@@ -13,6 +13,7 @@
  * // Returns: { type: 'div', props: { className: 'container' }, children: ['Hello'] }
  */
 export function jsx(type, props, ...children) {
+  
   const flatChildren = children.flat(Infinity).filter(child =>
     child !== false &&
     child !== null &&

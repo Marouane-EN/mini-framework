@@ -3,6 +3,7 @@ import { jsx } from "./core/jsx.js";
 import { addRoute } from "./core/route.js";
 import { handleRouteChange } from "./core/route.js";
 
+window.addEventListener("hashchange", handleRouteChange);
 /**
  * Initializes the routing system by setting up hash change listeners
  * Should be called automatically when the first route is registered
@@ -15,7 +16,6 @@ import { handleRouteChange } from "./core/route.js";
  * startTransition();
  */
 export function startTransition() {
-  window.addEventListener("hashchange", handleRouteChange);
   handleRouteChange();
 }
 export { useState, useEffect, jsx, addRoute, Store };

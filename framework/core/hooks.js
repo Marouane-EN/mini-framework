@@ -67,6 +67,10 @@ export function useState(initialValue) {
  * useEffect(() => { document.title = `Count: ${count}`; }, [count]);
  */
 export function useEffect(callback, dependencies) {
+  if (!Array.isArray(dependencies) && dependencies !== undefined) {
+    console.error("useEffect second argument must be an array or undefined");
+    return;
+  }
   const oldDependencies = effects[effectIndex];
   const hasChanged = areDepsChanged(oldDependencies, dependencies);
 
@@ -100,27 +104,27 @@ function areDepsChanged(oldDeps, newDeps) {
  * Creates a global store for managing shared state across components
  * Provides a simple alternative to Context API without requiring Provider wrappers
  * Automatically triggers re-renders when state is updated
- * 
+ *
  * @param {Object|*} [initialState=null] - Initial state value (typically an object)
  * @returns {Object} Store object with get and set methods
  * @property {Function} get - Returns the current state
  * @property {Function} set - Merges new state with current state and triggers re-render
- * 
+ *
  * @example
  * // Create a store for user authentication
  * const userStore = Store({ name: 'Guest', loggedIn: false });
- * 
+ *
  * // Read state in any component
  * const user = userStore.get();
- * 
+ *
  * // Update state (merges with existing state)
  * userStore.set({ name: 'John', loggedIn: true });
- * 
+ *
  * @example
  * // Create multiple stores for different concerns
  * const themeStore = Store({ mode: 'light', fontSize: 14 });
  * const cartStore = Store({ items: [], total: 0 });
- * 
+ *
  * // Partial updates
  * themeStore.set({ mode: 'dark' }); // Only updates mode, fontSize remains 14
  */

@@ -1,8 +1,9 @@
 import { active } from "./components/active.js";
 import { addRoute } from "../../framework/main.js";
-import { completed } from "./components/completed.js";
+import { completed,test } from "./components/completed.js";
 import { App } from "./components/app.js";
 
 addRoute("/completed", completed);
 addRoute("/active", active);
 addRoute("/", App);
+addRoute("/all", test);

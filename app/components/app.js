@@ -4,6 +4,7 @@ export const store = Store({ todos: [] });
 
 export function App() {
   const todos = store.get().todos;
+  console.log(todos);
 
   const [editingKey, setEditingKey] = useState(null);
   const [editText, setEditText] = useState("");
@@ -55,6 +56,11 @@ export function App() {
   function startEditing(todo) {
     setEditingKey(todo.key);
     setEditText(todo.text);
+
+    setTimeout(() => {
+      const el = document.getElementById("todo-input");
+      if (el) el.focus();
+    }, 0);
   }
 
   function finishEditing() {
@@ -68,7 +74,8 @@ export function App() {
   }
 
   return jsx(
-    "div", null,
+    "div",
+    null,
     jsx(
       "section",
       { className: "todoapp", id: "root" },
@@ -90,9 +97,14 @@ export function App() {
             type: "text",
             "data-testid": "text-input",
             placeholder: "What needs to be done?",
+            value: "",
             onkeydown: (e) => addTodo(e),
           }),
-          jsx("label", { className: "visually-hidden", for: "todo-input" }, "New Todo Input")
+          jsx(
+            "label",
+            { className: "visually-hidden", for: "todo-input" },
+            "New Todo Input"
+          )
         )
       ),
 
@@ -103,23 +115,27 @@ export function App() {
 
         // checked All
         todos.length > 0 &&
-        jsx(
-          "div",
-          { className: "toggle-all-container" },
+          jsx(
+            "div",
+            { className: "toggle-all-container" },
 
-          jsx("input", {
-            className: allChecked ? "toggle-all checkedAll" : "toggle-all",
-            type: "checkbox",
-            id: "toggle-all",
-            "data-testid": "toggle-all",
-            onclick: () => checkedAll(),
-          }),
+            jsx("input", {
+              className: allChecked ? "toggle-all checkedAll" : "toggle-all",
+              type: "checkbox",
+              id: "toggle-all",
+              "data-testid": "toggle-all",
+              onclick: () => checkedAll(),
+            }),
 
-          jsx("label", {
-            className: "toggle-all-label",
-            for: "toggle-all",
-          }, "Toggle All Input")
-        ),
+            jsx(
+              "label",
+              {
+                className: "toggle-all-label",
+                for: "toggle-all",
+              },
+              "Toggle All Input"
+            )
+          ),
         jsx(
           "ul",
           { className: "todo-list", "data-testid": "todo-list" },
@@ -130,98 +146,104 @@ export function App() {
               { className: todo.completed ? "completed" : "", key: todo.key },
               editingKey !== todo.key
                 ? jsx(
-                  "div",
-                  { className: "view" },
-                  jsx("input", {
-                    type: "checkbox",
-                    className: "toggle",
-                    "data-testid":"todo-item-toggle",
-                    onclick: () => checkedTodo(todo),
-                  }),
-                  jsx(
-                    "label",
-                    {
-                      "data-testid": "todo-item-label",
-                      ondblclick: () => startEditing(todo),
-                    },
-                    todo.text
-                  ),
-
-                  jsx("button", {
-                    className: "destroy",
-                    "data-testid":"todo-item-button",
-                    onclick: () => deleteTodo(todo.key),
-                  })
-                )
-                : jsx(
-                  "div",
-                  { className: "view" },
-                  jsx(
                     "div",
-                    { className: "input-container" },
-                    jsx("input", {
-                      type: "text",
-                      className: "new-todo",
-                      id: "todo-input",
-                      "data-testid": "text-input",
-                      value: editText,
-                      oninput: (e) => setEditText(e.target.value),
-                      onkeydown: (e) => e.key === "Enter" && finishEditing(),
-                    }),
+                    { className: "view" },
+                    todo.completed
+                      ? jsx("input", {
+                          type: "checkbox",
+                          className: "toggle",
+                          "data-testid": "todo-item-toggle",
+                          checked: "checked",
+                          onclick: () => checkedTodo(todo),
+                        })
+                      : jsx("input", {
+                          type: "checkbox",
+                          className: "toggle",
+                          "data-testid": "todo-item-toggle",
+                          onclick: () => checkedTodo(todo),
+                        }),
                     jsx(
                       "label",
                       {
-                        className: "visually-hidden",
-                        for: "todo-input",
+                        "data-testid": "todo-item-label",
+                        ondblclick: () => startEditing(todo),
                       },
                       todo.text
+                    ),
+
+                    jsx("button", {
+                      className: "destroy",
+                      "data-testid": "todo-item-button",
+                      onclick: () => deleteTodo(todo.key),
+                    })
+                  )
+                : jsx(
+                    "div",
+                    { className: "view" },
+                    jsx(
+                      "div",
+                      { className: "input-container" },
+                      jsx("input", {
+                        type: "text",
+                        className: "new-todo",
+                        id: "todo-input",
+                        "data-testid": "text-input",
+                        value: editText,
+                        onfocus: (e) => {
+                          // ensure focus even after rerender
+                          setTimeout(() => e.target.select(), 0);
+                        },
+                        oninput: (e) => setEditText(e.target.value),
+                        onkeydown: (e) => e.key === "Enter" && finishEditing(),
+                      }),
+                      jsx(
+                        "label",
+                        {
+                          className: "visually-hidden",
+                          for: "todo-input",
+                        },
+                        todo.text
+                      )
                     )
                   )
-                )
-
-            )
+            );
           })
-        ),
+        )
       ),
-
-
-
 
       // TOGGLE ALL
 
-
       // FOOTER
       todos.length > 0 &&
-      jsx(
-        "footer",
-        { className: "footer" },
-
-        jsx("span", { className: "todo-count" }, itemLeft + " items left"),
-
         jsx(
-          "ul",
-          { className: "filters" , "data-testid":"footer-navigation" },
+          "footer",
+          { className: "footer", "data-testid": "footer" },
+
+          jsx("span", { className: "todo-count" }, itemLeft + " items left"),
 
           jsx(
-            "li",
-            null,
-            jsx("a", { className: "selected", href: "#/" }, "All")
+            "ul",
+            { className: "filters", "data-testid": "footer-navigation" },
+
+            jsx(
+              "li",
+              null,
+              jsx("a", { className: "selected", href: "#/" }, "All")
+            ),
+
+            jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
+
+            jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
           ),
 
-          jsx("li", null, jsx("a", { href: "#/active" }, "Active")),
-
-          jsx("li", null, jsx("a", { href: "#/completed" }, "Completed"))
-        ),
-
-        jsx(
-          "button",
-          { className: "clear-completed", onclick: clearCompleted  },
-          "Clear completed"
+          jsx(
+            "button",
+            { className: "clear-completed", onclick: clearCompleted },
+            "Clear completed"
+          )
         )
-      )
-
-    )
-    , jsx(
+    ),
+    jsx(
       "footer",
       { className: "info" },
       jsx("p", null, "Double-click to edit a todo"),
@@ -233,9 +255,7 @@ export function App() {
         jsx("a", { href: "https://github.com/RedaAz07" }, "Zone01")
       )
     )
-  )
+  );
 }
 
 // --------------------------------------
-
-

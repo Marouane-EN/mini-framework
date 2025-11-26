@@ -38,29 +38,16 @@ function reconcileChildren(parent, newChildren, oldChildren) {
     const { node: oldChild, index: oldIndex } = oldKeyed.get(key) || {};
     const domNode = domNodes[oldIndex];
     if (key != null && oldKeyed.has(key) && domNode) {
-      // Found matching keyed element
-      console.log("===============================");
-      console.log("oldChild", oldChild, "oldIndex", oldIndex);
 
       // Move DOM node if needed
       const currentDomIndex = Array.from(parent.childNodes).indexOf(domNode);
-      console.log(
-        "currentDomIndex",
-        currentDomIndex,
-        " ---- ",
-        "newIndex",
-        newIndex
-      );
 
       if (currentDomIndex !== newIndex) {
         const referenceNode = parent.childNodes[newIndex];
-        console.log("referenceNode", referenceNode);
 
         if (referenceNode) {
           parent.insertBefore(domNode, referenceNode);
         } else {
-          console.log("11111111111111");
-
           parent.appendChild(domNode);
         }
       }
@@ -166,9 +153,11 @@ function updateElementProps(el, newNode, oldNode) {
     } else if (key === "id") {
       el.id = value;
     } else if (key === "autoFocus" && value === true) {
-      // Delay focus until node is mounted
-      setTimeout(() => el.focus(), 0);
-      continue;
+      setTimeout(() => {
+        el.focus();
+        const len = el.value?.length || 0;
+        el.setSelectionRange(len, len);
+      }, 0);
     } else if (key === "style" && typeof value === "object") {
       Object.assign(el.style, value);
     } else if (key === "checked") {

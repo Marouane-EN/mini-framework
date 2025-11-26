@@ -56,14 +56,10 @@ export function App() {
   function startEditing(todo) {
     setEditingKey(todo.key);
     setEditText(todo.text);
-
-    setTimeout(() => {
-      const el = document.getElementById("todo-input");
-      if (el) el.focus();
-    }, 0);
   }
 
   function finishEditing() {
+    if (editText.trim().length < 2) return;
     const updated = todos.map((t) =>
       t.key === editingKey ? { ...t, text: editText } : t
     );
@@ -153,7 +149,7 @@ export function App() {
                           type: "checkbox",
                           className: "toggle",
                           "data-testid": "todo-item-toggle",
-                          checked: "checked",
+                          checked: true,
                           onclick: () => checkedTodo(todo),
                         })
                       : jsx("input", {
@@ -189,12 +185,16 @@ export function App() {
                         id: "todo-input",
                         "data-testid": "text-input",
                         value: editText,
-                        onfocus: (e) => {
-                          // ensure focus even after rerender
-                          setTimeout(() => e.target.select(), 0);
-                        },
-                        oninput: (e) => setEditText(e.target.value),
                         onkeydown: (e) => e.key === "Enter" && finishEditing(),
+                        oninput: (e) => setEditText(e.target.value),
+                        onblur: () => (
+                          setTimeout(() => {
+                            setEditText("");
+                            setEditingKey(null);
+                          }),
+                          0
+                        ),
+                        autoFocus: true,
                       }),
                       jsx(
                         "label",

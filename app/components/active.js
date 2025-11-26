@@ -52,6 +52,7 @@ export function active() {
   }
 
   function finishEditing() {
+    if (editText.trim().length < 2) return;
     const updated = todos.map((t) =>
       t.key === editingKey ? { ...t, text: editText } : t
     );
@@ -85,7 +86,7 @@ export function active() {
             type: "text",
             "data-testid": "text-input",
             placeholder: "What needs to be done?",
-            value:"",
+            value: "",
             onkeydown: (e) => addTodo(e),
           }),
           jsx(
@@ -177,8 +178,16 @@ export function active() {
                         id: "todo-input",
                         "data-testid": "text-input",
                         value: editText,
-                        oninput: (e) => setEditText(e.target.value),
                         onkeydown: (e) => e.key === "Enter" && finishEditing(),
+                        oninput: (e) => setEditText(e.target.value),
+                        onblur: () => (
+                          setTimeout(() => {
+                            setEditText("");
+                            setEditingKey(null);
+                          }),
+                          0
+                        ),
+                        autoFocus: true,
                       }),
                       jsx(
                         "label",

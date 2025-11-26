@@ -53,6 +53,7 @@ export function completed() {
   }
 
   function finishEditing() {
+    if (editText.trim().length < 2) return;
     const updated = todos.map((t) =>
       t.key === editingKey ? { ...t, text: editText } : t
     );
@@ -137,7 +138,6 @@ export function completed() {
                 ? jsx(
                     "div",
                     { className: "view" },
-
                     todo.completed
                       ? jsx("input", {
                           type: "checkbox",
@@ -152,7 +152,6 @@ export function completed() {
                           "data-testid": "todo-item-toggle",
                           onclick: () => checkedTodo(todo),
                         }),
-
                     jsx(
                       "label",
                       {
@@ -170,7 +169,7 @@ export function completed() {
                   )
                 : jsx(
                     "div",
-                    { className: "view", },
+                    { className: "view" },
                     jsx(
                       "div",
                       { className: "input-container" },
@@ -180,17 +179,22 @@ export function completed() {
                         id: "todo-input",
                         "data-testid": "text-input",
                         value: editText,
-                        
-                        oninput: (e) => setEditText(e.target.value),
                         onkeydown: (e) => e.key === "Enter" && finishEditing(),
+                        oninput: (e) => setEditText(e.target.value),
+                        onblur: () => (
+                          setTimeout(() => {
+                            setEditText("");
+                            setEditingKey(null);
+                          }),
+                          0
+                        ),
+                        autoFocus: true,
                       }),
                       jsx(
                         "label",
                         {
                           className: "visually-hidden",
                           for: "todo-input",
-                          autofocus: true,
-                          
                         },
                         todo.text
                       )

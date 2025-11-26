@@ -29,8 +29,11 @@ export function createElement(node) {
       el.id = value;
     } else if (key === "autoFocus" && value === true) {
       // Delay focus until node is mounted
-      setTimeout(() => el.focus(), 0);
-      continue;
+      setTimeout(() => {
+        el.focus();
+        const len = el.value?.length || 0;
+        el.setSelectionRange(len, len);
+      }, 0);
     } else if (key === "checked") {
       el.checked = value;
     } else if (key === "style" && typeof value === "object") {

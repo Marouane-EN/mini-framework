@@ -1,4 +1,5 @@
-import { jsx, startTransition } from "../main.js";
+import { startTransition } from "../main.js";
+import { notFound } from "./notfound.js";
 import { render } from "./render.js";
 
 const routes = {};
@@ -20,7 +21,7 @@ export function addRoute(path, callback) {
   if (routes[path]) return;
 
   routes[path] = callback;
-  
+
   startTransition();
 }
 
@@ -41,6 +42,6 @@ export function handleRouteChange() {
   if (routes[route]) {
     render(routes[route]);
   } else {
-    render(() => jsx("div", null, "404 - Page Not Found"));
+    render(notFound);
   }
 }

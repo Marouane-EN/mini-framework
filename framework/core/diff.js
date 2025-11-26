@@ -38,7 +38,6 @@ function reconcileChildren(parent, newChildren, oldChildren) {
     const { node: oldChild, index: oldIndex } = oldKeyed.get(key) || {};
     const domNode = domNodes[oldIndex];
     if (key != null && oldKeyed.has(key) && domNode) {
-
       // Move DOM node if needed
       const currentDomIndex = Array.from(parent.childNodes).indexOf(domNode);
 

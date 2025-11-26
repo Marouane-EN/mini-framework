@@ -729,6 +729,27 @@ addRoute("/about", AboutPage);
 addRoute("/contact", ContactPage);
 ```
 
+**404 Not Found Page:**
+
+The framework includes a default 404 page that displays when users navigate to unregistered routes. If you want to customize it, edit the `notFound()` function in `framework/core/notfound.js`:
+
+```javascript
+// framework/core/notfound.js
+import { jsx } from "./jsx.js";
+
+export function notFound() {
+  return jsx(
+    "div",
+    { style: { padding: "20px", textAlign: "center" } },
+    jsx("h1", null, "404 - Page Not Found"),
+    jsx("p", null, "The page you are looking for does not exist."),
+    jsx("a", { href: "#/" }, "Go back home")
+  );
+}
+```
+
+You can customize the styling, content, and add additional functionality like logging or redirects.
+
 ---
 
 ### Rendering

@@ -4,7 +4,6 @@ export const store = Store({ todos: [] });
 
 export function App() {
   const todos = store.get().todos;
-  console.log(todos);
 
   const [editingKey, setEditingKey] = useState(null);
   const [editText, setEditText] = useState("");

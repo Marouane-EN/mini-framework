@@ -10,17 +10,17 @@ function reconcileChildren(parent, newChildren, oldChildren) {
   // Build maps of keyed elements
   const oldKeyed = new Map();
   const newKeyed = new Map();
-  
+
   // Track old nodes by key
   oldChildren.forEach((child, i) => {
-    if (child && typeof child === 'object' && child.props?.key != null) {
+    if (child && typeof child === "object" && child.props?.key != null) {
       oldKeyed.set(child.props.key, { node: child, index: i });
     }
   });
 
   // Track new nodes by key
   newChildren.forEach((child, i) => {
-    if (child && typeof child === 'object' && child.props?.key != null) {
+    if (child && typeof child === "object" && child.props?.key != null) {
       newKeyed.set(child.props.key, { node: child, index: i });
     }
   });
@@ -33,17 +33,18 @@ function reconcileChildren(parent, newChildren, oldChildren) {
   newChildren.forEach((newChild, newIndex) => {
     if (!newChild) return;
 
-    const key = typeof newChild === 'object' ? newChild.props?.key : null;
+    const key = typeof newChild === "object" ? newChild.props?.key : null;
 
-    if (key != null && oldKeyed.has(key)) {
-      // Found matching keyed element
-      const { node: oldChild, index: oldIndex } = oldKeyed.get(key);
-      const domNode = domNodes[oldIndex];
+    const { node: oldChild, index: oldIndex } = oldKeyed.get(key) || {};
+    const domNode = domNodes[oldIndex];
+    if (key != null && oldKeyed.has(key) && domNode) {
 
       // Move DOM node if needed
       const currentDomIndex = Array.from(parent.childNodes).indexOf(domNode);
+
       if (currentDomIndex !== newIndex) {
         const referenceNode = parent.childNodes[newIndex];
+
         if (referenceNode) {
           parent.insertBefore(domNode, referenceNode);
         } else {
@@ -53,7 +54,7 @@ function reconcileChildren(parent, newChildren, oldChildren) {
 
       // Update the element in place
       updateElementProps(domNode, newChild, oldChild);
-      
+
       // Recursively diff children
       if (newChild.children && oldChild.children) {
         reconcileChildren(domNode, newChild.children, oldChild.children);
@@ -78,7 +79,7 @@ function reconcileChildren(parent, newChildren, oldChildren) {
 
   // Second pass: Remove old keyed elements that are no longer present
   oldKeyed.forEach(({ index }, key) => {
-    if (!newKeyed.has(key)) {
+    if (!newKeyed.has(key) && !processedIndices.has(index)) {
       const domNode = domNodes[index];
       if (domNode && domNode.parentNode === parent) {
         parent.removeChild(domNode);
@@ -90,8 +91,9 @@ function reconcileChildren(parent, newChildren, oldChildren) {
   if (newChildren.length < oldChildren.length) {
     for (let i = oldChildren.length - 1; i >= newChildren.length; i--) {
       const oldChild = oldChildren[i];
-      const hasKey = oldChild && typeof oldChild === 'object' && oldChild.props?.key != null;
-      
+      const hasKey =
+        oldChild && typeof oldChild === "object" && oldChild.props?.key != null;
+
       if (!hasKey && parent.childNodes[i]) {
         parent.removeChild(parent.childNodes[i]);
       }
@@ -106,12 +108,12 @@ function reconcileChildren(parent, newChildren, oldChildren) {
  * @param {Object} oldNode - Old virtual node
  */
 function updateElementProps(el, newNode, oldNode) {
-  if (!el || typeof newNode !== 'object' || typeof oldNode !== 'object') return;
+  if (!el || typeof newNode !== "object" || typeof oldNode !== "object") return;
 
   // Remove old attributes not in newNode
   for (const key in oldNode.props) {
-    if (key === 'key') continue; // Skip key prop
-    
+    if (key === "key") continue; // Skip key prop
+
     if (!(key in newNode.props)) {
       if (key.startsWith("on")) {
         el.removeEventListener(key.slice(2).toLowerCase(), oldNode.props[key]);
@@ -119,6 +121,9 @@ function updateElementProps(el, newNode, oldNode) {
         el.className = "";
       } else if (key === "id") {
         el.removeAttribute("id");
+      } else if (key === "checked") {
+        el.checked = false;
+        el.removeAttribute(key);
       } else {
         el.removeAttribute(key);
       }
@@ -127,8 +132,8 @@ function updateElementProps(el, newNode, oldNode) {
 
   // Set new/changed attributes
   for (const key in newNode.props) {
-    if (key === 'key') continue; // Skip key prop
-    
+    if (key === "key") continue; // Skip key prop
+
     const value = newNode.props[key];
     const oldValue = oldNode.props[key];
 
@@ -147,8 +152,16 @@ function updateElementProps(el, newNode, oldNode) {
       el.className = value;
     } else if (key === "id") {
       el.id = value;
-    } else if (key === "style" && typeof value === 'object') {
+    } else if (key === "autoFocus" && value === true) {
+      setTimeout(() => {
+        el.focus();
+        const len = el.value?.length || 0;
+        el.setSelectionRange(len, len);
+      }, 0);
+    } else if (key === "style" && typeof value === "object") {
       Object.assign(el.style, value);
+    } else if (key === "checked") {
+      el.checked = value;
     } else {
       el.setAttribute(key, value);
     }

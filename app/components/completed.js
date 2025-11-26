@@ -1,4 +1,4 @@
-import { useState, jsx, useEffect } from "../../framework/main.js";
+import { useState, jsx } from "../../framework/main.js";
 import { store } from "./app.js";
 // GLOBAL STORE HOLDS TODOS
 

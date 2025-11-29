@@ -3,7 +3,7 @@ import { notFound } from "./notfound.js";
 import { render } from "./render.js";
 
 const routes = {};
-
+let timedout;
 /**
  * Registers a route with its corresponding component callback
  * Routes are matched against the URL hash (e.g., #/about, #/contact)
@@ -21,8 +21,11 @@ export function addRoute(path, callback) {
   if (routes[path]) return;
 
   routes[path] = callback;
+  if (timedout) clearTimeout(timedout);
+  timedout = setTimeout(() => {
+    startTransition();
+  }, 0);
 
-  startTransition();
 }
 
 /**

@@ -1,9 +1,23 @@
 import { pindingEffects, clearhooks } from "./hooks.js";
 import { updateElement } from "./diff.js";
-document.body.innerHTML = ""; // wipe everything
-const root = document.getElementById("root") || document.body;
+
+let root = null;
 let rootElements;
 let oldVDOM;
+
+/**
+ * Gets or creates the root element for rendering
+ * @returns {HTMLElement} The root DOM element
+ */
+function getRoot() {
+  if (!root) {
+    root = document.getElementById("root");
+    if (!root) {
+      console.warn("Element with id 'root' not found, using document.body");
+      root = document.body;
+    }
+  }
+}
 
 /**
  * Main render function that updates the DOM based on virtual DOM changes
@@ -21,6 +35,7 @@ let oldVDOM;
  * render();
  */
 export function render(App) {
+  getRoot();
   if (App) rootElements = App;
   pindingEffects.forEach((fn) => fn());
 

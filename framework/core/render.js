@@ -1,7 +1,7 @@
 import { pindingEffects, clearhooks } from "./hooks.js";
 import { updateElement } from "./diff.js";
 document.body.innerHTML = ""; // wipe everything
-const root = document.body;
+const root = document.getElementById("root") || document.body;
 let rootElements;
 let oldVDOM;
 

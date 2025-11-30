@@ -64,7 +64,7 @@ export function completed() {
   }
 
   return jsx(
-    "div",
+    "FRAGMENT",
     null,
     jsx(
       "section",

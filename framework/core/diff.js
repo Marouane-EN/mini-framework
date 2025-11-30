@@ -180,6 +180,13 @@ function updateElementProps(el, newNode, oldNode) {
  * @param {number} index - Index of the node in parent
  */
 export function updateElement(parent, newNode, oldNode, index = 0) {
+  // Handle Fragment
+  if (newNode && newNode.type === "FRAGMENT") {
+    newNode.children.forEach((child, i) => {
+      updateElement(parent, child, oldNode ? oldNode.children[i] : null, index + i);
+    });
+    return;
+  }
   // If oldNode doesn't exist, create new DOM
   if (!oldNode) {
     parent.appendChild(createElement(newNode));

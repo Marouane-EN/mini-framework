@@ -69,7 +69,7 @@ export function App() {
   }
 
   return jsx(
-    "div",
+    "FRAGMENT",
     null,
     jsx(
       "section",

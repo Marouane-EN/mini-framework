@@ -63,7 +63,7 @@ export function active() {
   }
 
   return jsx(
-    "div",
+    "FRAGMENT",
     null,
     jsx(
       "section",

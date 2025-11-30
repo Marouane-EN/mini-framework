@@ -21,7 +21,9 @@ export function createElement(node) {
   const el = document.createElement(node.type);
 
   for (const [key, value] of Object.entries(node.props)) {
-    if (key.startsWith("on") && typeof value === "function") {
+    if (key === "ref" && typeof value === "object" && value !== null) {
+      value.current = el;
+    } else if (key.startsWith("on") && typeof value === "function") {
       el.addEventListener(key.slice(2).toLowerCase(), value);
     } else if (key === "className") {
       el.className = value;

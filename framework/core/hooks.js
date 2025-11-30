@@ -5,7 +5,8 @@ let stateIndex = 0;
 let effects = [];
 let effectIndex = 0;
 export let pindingEffects = [];
-
+let refs = [];
+let refIndex = 0;
 /**
  * Resets all hook indices and clears pending effects
  * Called before each render to prepare for fresh hook execution
@@ -139,4 +140,25 @@ export function Store(initialState) {
   };
 
   return { get, set };
+}
+
+/**
+ * React-style ref hook for creating mutable references
+ * Returns a ref object with a .current property that persists across renders
+ *
+ * @param {*} initialValue - Initial value for the ref's current property
+ * @returns {Object} Ref object with a mutable .current property
+ *
+ * @example
+ * const myRef = useRef(null);
+ * myRef.current = someValue;
+ */
+export function useRef(initialValue) {
+  const currentRefIndex = refIndex;
+  refs[currentRefIndex] =
+    refs[currentRefIndex] !== undefined
+      ? refs[currentRefIndex]
+      : { current: initialValue };
+  refIndex++;
+  return refs[currentRefIndex];
 }

@@ -19,7 +19,7 @@ A lightweight, React-like JavaScript framework with virtual DOM, hooks, and clie
 
 - **Virtual DOM** - Efficient DOM manipulation using a virtual representation
 - **`jsx()` Function** - Create elements using the `jsx()` function (no JSX transpiler needed)
-- **React-like Hooks** - `useState` and `useEffect` for state and side effects
+- **React-like Hooks** - `useState`, `useEffect`, and `useRef` for state, side effects, and references
 - **Key-based Reconciliation** - Optimized list rendering with key props (must be unique)
 - **Client-side Routing** - Hash-based routing system
 - **Lightweight** - Minimal bundle size with no dependencies
@@ -778,13 +778,19 @@ renderApp(App);
 ### Example 1: Counter with Multiple Features
 
 ```javascript
-import { jsx, useState, useEffect } from "./framework/main.js";
+import { jsx, useState, useEffect, useRef } from "./framework/main.js";
 import { render } from "./framework/core/render.js";
 
 function Counter() {
   const [count, setCount] = useState(0);
   const [step, setStep] = useState(1);
   const [history, setHistory] = useState([]);
+  const renderCount = useRef(0);
+
+  // Track render count
+  useEffect(() => {
+    renderCount.current += 1;
+  });
 
   // Update document title
   useEffect(() => {
@@ -817,6 +823,7 @@ function Counter() {
     "div",
     { className: "counter" },
     jsx("h1", null, "Count: ", count),
+    jsx("p", null, "Renders: ", renderCount.current),
 
     jsx(
       "div",
@@ -1269,6 +1276,163 @@ function App() {
 }
 
 render(App);
+```
+
+---
+
+### Example 5: Using useRef for DOM Manipulation and Timers
+
+```javascript
+import { jsx, useState, useRef, useEffect } from "./framework/main.js";
+import { render } from "./framework/core/render.js";
+
+function RefExamples() {
+  const [activeTab, setActiveTab] = useState('focus');
+
+  return jsx("div", { className: "ref-examples" },
+    jsx("h1", null, "useRef Examples"),
+    
+    jsx("div", { className: "tabs" },
+      jsx("button", { 
+        onClick: () => setActiveTab('focus'),
+        className: activeTab === 'focus' ? 'active' : ''
+      }, "Auto Focus"),
+      jsx("button", { 
+        onClick: () => setActiveTab('timer'),
+        className: activeTab === 'timer' ? 'active' : ''
+      }, "Timer"),
+      jsx("button", { 
+        onClick: () => setActiveTab('previous'),
+        className: activeTab === 'previous' ? 'active' : ''
+      }, "Previous Value")
+    ),
+
+    activeTab === 'focus' && FocusExample(),
+    activeTab === 'timer' && TimerExample(),
+    activeTab === 'previous' && PreviousValueExample()
+  );
+}
+
+// Example 1: Auto-focus input
+function FocusExample() {
+  const inputRef = useRef(null);
+  const [value, setValue] = useState('');
+
+  useEffect(() => {
+    // Focus input when component mounts
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const handleFocus = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  return jsx("div", { className: "example" },
+    jsx("h2", null, "Auto Focus Input"),
+    jsx("input", {
+      ref: inputRef,
+      type: "text",
+      placeholder: "This input auto-focuses on mount",
+      value: value,
+      onChange: (e) => setValue(e.target.value)
+    }),
+    jsx("p", null, "Value: ", value),
+    jsx("button", { onClick: handleFocus }, "Focus Input Again")
+  );
+}
+
+// Example 2: Timer with useRef
+function TimerExample() {
+  const [seconds, setSeconds] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const intervalRef = useRef(null);
+
+  const startTimer = () => {
+    if (!intervalRef.current) {
+      setIsRunning(true);
+      intervalRef.current = setInterval(() => {
+        setSeconds(s => s + 1);
+      }, 1000);
+    }
+  };
+
+  const stopTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      setIsRunning(false);
+    }
+  };
+
+  const resetTimer = () => {
+    stopTimer();
+    setSeconds(0);
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  return jsx("div", { className: "example" },
+    jsx("h2", null, "Timer Example"),
+    jsx("h3", null, "Time: ", seconds, " seconds"),
+    jsx("div", { className: "timer-controls" },
+      jsx("button", { 
+        onClick: startTimer,
+        disabled: isRunning
+      }, "Start"),
+      jsx("button", { 
+        onClick: stopTimer,
+        disabled: !isRunning
+      }, "Stop"),
+      jsx("button", { onClick: resetTimer }, "Reset")
+    ),
+    jsx("p", null, isRunning ? "Timer is running..." : "Timer is stopped")
+  );
+}
+
+// Example 3: Previous value tracking
+function PreviousValueExample() {
+  const [count, setCount] = useState(0);
+  const prevCountRef = useRef();
+  const renderCountRef = useRef(0);
+
+  useEffect(() => {
+    prevCountRef.current = count;
+    renderCountRef.current += 1;
+  });
+
+  const prevCount = prevCountRef.current;
+
+  return jsx("div", { className: "example" },
+    jsx("h2", null, "Previous Value Tracking"),
+    jsx("p", null, "Current count: ", count),
+    jsx("p", null, "Previous count: ", prevCount !== undefined ? prevCount : "N/A"),
+    jsx("p", null, "Render count: ", renderCountRef.current),
+    jsx("div", null,
+      jsx("button", { 
+        onClick: () => setCount(count + 1)
+      }, "Increment"),
+      jsx("button", { 
+        onClick: () => setCount(count - 1)
+      }, "Decrement"),
+      jsx("button", { 
+        onClick: () => setCount(0)
+      }, "Reset")
+    )
+  );
+}
+
+render(RefExamples);
 ```
 
 ---

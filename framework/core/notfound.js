@@ -1,4 +1,10 @@
 import { jsx } from "./jsx.js";
+
+/**
+ * Renders a simple 404 Not Found component
+ *
+ * @returns {Object} JSX representation of the Not Found page
+ */
 export function notFound() {
   return jsx(
     "div",
